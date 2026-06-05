@@ -1,5 +1,6 @@
-const express = require("express")
-const app = express()
+import express from "express";
+import userRouter from "./routes/users.js";
+const app = express();
  
 app.use(express.json());
 
@@ -7,7 +8,6 @@ app.get('/', (req,res) =>{
     res.send('hi')
 })
 
-const userRouter = require("./routes/users")
 app.use("/users",userRouter)
 
 app.listen(3000, () => {
