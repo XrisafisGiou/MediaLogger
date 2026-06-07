@@ -5,7 +5,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output = "generated/prisma"
 }
 
 datasource db {
@@ -21,11 +20,17 @@ model User {
   userMovies   UserMovie[]
 }
 
+enum MovieStatus {
+  watchlist
+  watched
+}
+
 model UserMovie {
   id            Int    @id @default(autoincrement())
   userId        Int
   tmdbMovieId   Int
-  status        String
+  status        MovieStatus
+  isFavorite  Boolean @default(false)
 
   user          User   @relation(fields: [userId], references: [id])    
 

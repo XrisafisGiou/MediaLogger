@@ -33,7 +33,7 @@ export async function register(req, res) {
         });
     } catch (error) {
         console.error(error)
-        res.status(500).json({ error: "Server error!" });
+        return res.status(500).json({ error: "Server error!" });
     }
 }
 
@@ -62,7 +62,7 @@ export async function login(req, res) {
         }
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Server error!" });
+        return res.status(500).json({ error: "Server error!" });
     }
 }
 
@@ -86,6 +86,6 @@ export async function identification(req,res) {
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Server error!" });
+        return res.status(500).json({ error: "Server error!" });
     }
 }
