@@ -24,3 +24,80 @@ export async function addMovie(req, res) {
         return res.status(500).json({ error: "Server error!" });
     }
 }
+
+export async function getMovies(req, res) {
+    try {
+        const movies = await prisma.userMovie.findMany({
+            where: {userId: req.user.userId}
+        });
+        res.json(movies);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Server error!" });
+    }
+}
+
+export const updateMovie = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const {status, isFavorite} = req.body;
+
+        const movie = await prisma.userMovie.findUnique({
+            where: {
+                id: Number(id),
+                userId: req.user.userId
+            }
+        });
+
+        if (!movie) {
+            return res.status(404).json({
+                error: "Movie not found!"
+            });
+        }
+
+        const updatedMovie = await prisma.userMovie.update({
+            where: {
+                id: Number(id)
+            },
+            data: {
+                status, isFavorite
+            }
+        });
+        
+        res.json(updatedMovie);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Server error!" });
+    }
+}
+
+export const deleteMovie = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const movie = await prisma.userMovie.findUnique({
+            where: {
+                id: Number(id),
+                userId: req.user.userId
+            }
+        });
+
+        if (!movie) {
+            return res.status(404).json({
+                error: "Movie not found!"
+            });
+        }
+
+        await prisma.userMovie.delete({
+            where: {
+                id: movie.id,
+            }
+        });
+
+        res.json({message: "Movie deleted successfully",});
+        
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Server error!" });
+    }
+}
