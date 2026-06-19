@@ -9,6 +9,19 @@ export async function addMovie(req, res) {
             return res.status(400).json({ error: "tmdbMovieId and status are required"});
         }
 
+        const existingMovie = await prisma.userMovie.findFirst({
+            where: {
+                userId,
+                tmdbMovieId
+            }
+        });
+
+        if (existingMovie) {
+            return res.status(400).json({
+                error: "Movie already exists"
+            });
+        }
+
         const movie = await prisma.userMovie.create({
             data: {
                 userId,
@@ -42,7 +55,7 @@ export const updateMovie = async (req, res) => {
         const { id } = req.params;
         const {status, isFavorite} = req.body;
 
-        const movie = await prisma.userMovie.findUnique({
+        const movie = await prisma.userMovie.findFirst({
             where: {
                 id: Number(id),
                 userId: req.user.userId
@@ -75,7 +88,7 @@ export const deleteMovie = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const movie = await prisma.userMovie.findUnique({
+        const movie = await prisma.userMovie.findFirst({
             where: {
                 id: Number(id),
                 userId: req.user.userId
