@@ -3,35 +3,37 @@ import prisma from "../lib/prisma.js";
 export async function addMovie(req, res) {
     try {
         const userId = req.user.userId;
-        const { tmdbMovieId, status, isFavorite } = req.body;
+        const { tmdbMovieId, title, posterPath, status, isFavorite } = req.body;
 
         if (!tmdbMovieId || !status) {
             return res.status(400).json({ error: "tmdbMovieId and status are required"});
         }
 
-        const existingMovie = await prisma.userMovie.findFirst({
-            where: {
-                userId,
-                tmdbMovieId
-            }
+        //Check if movie exists
+        let movie = await prisma.movie.findUnique({
+            where: { tmdbMovieId },
         });
 
-        if (existingMovie) {
-            return res.status(400).json({
-                error: "Movie already exists"
+        if (!movie) {
+            movie = await prisma.movie.create({
+                data: {
+                    tmdbMovieId,
+                    title,
+                    posterPath,
+                },
             });
         }
 
-        const movie = await prisma.userMovie.create({
+        const userMovie = await prisma.userMovie.create({
             data: {
                 userId,
-                tmdbMovieId,
+                movieId: movie.id,
                 status,
-                isFavorite: isFavorite ?? false
+                isFavorite: isFavorite ?? false,
             },
         });
-        return res.json(movie);
 
+        return res.json(userMovie);
     } catch (error) {
         console.error(error);
         return res.status(500).json({ error: "Server error!" });
@@ -41,7 +43,10 @@ export async function addMovie(req, res) {
 export async function getMovies(req, res) {
     try {
         const movies = await prisma.userMovie.findMany({
-            where: {userId: req.user.userId}
+        where: { userId: req.user.userId },
+        include: {
+            movie: true
+        }
         });
         res.json(movies);
     } catch (error) {

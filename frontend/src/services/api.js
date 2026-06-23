@@ -36,7 +36,7 @@ export async function getMovies() {
   return res.json();
 }
 
-export async function addMovie(tmdbMovieId, status, isFavorite = false) {
+export async function addMovie(data) {
   const token = localStorage.getItem("token");
 
   const res = await fetch(`${API_URL}/movies`, {
@@ -45,11 +45,7 @@ export async function addMovie(tmdbMovieId, status, isFavorite = false) {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-            tmdbMovieId,
-            status,
-            isFavorite,
-        }),
+        body: JSON.stringify(data),
     });
 
   return res.json();
@@ -58,7 +54,7 @@ export async function addMovie(tmdbMovieId, status, isFavorite = false) {
 export async function updateMovie(id, data) {
     const token = localStorage.getItem("token");
 
-    const res = await fetch(`http://localhost:3000/movies/${id}`, {
+    const res = await fetch(`${API_URL}/movies/${id}`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
@@ -73,7 +69,7 @@ export async function updateMovie(id, data) {
 export async function deleteMovie(id) {
     const token = localStorage.getItem("token");
 
-    const res = await fetch(`http://localhost:3000/movies/${id}`, {
+    const res = await fetch(`${API_URL}/movies/${id}`, {
         method: "DELETE",
         headers: {
             Authorization: `Bearer ${token}`,

@@ -3,9 +3,6 @@ import { getMovies, addMovie, updateMovie, deleteMovie, searchMovies } from "../
 
 export default function Movies() {
   const [movies, setMovies] = useState([]);
-  const [tmdbMovieId, setTmdbMovieId] = useState("");
-  const [status, setStatus] = useState("watchlist");
-  const [isFavorite, setIsFavorite] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
 
@@ -20,12 +17,6 @@ export default function Movies() {
 
   async function handleSubmit(e) {
         e.preventDefault();
-
-        await addMovie(Number(tmdbMovieId), status, isFavorite);
-
-        setTmdbMovieId("");
-
-        loadMovies();
     }
 
   async function handleSearch(e) {
@@ -64,7 +55,13 @@ export default function Movies() {
 
                         <button
                             onClick={async () => {
-                                await addMovie(movie.id, "watchlist", false);
+                                await addMovie({
+                                    tmdbMovieId: movie.id,
+                                    title: movie.title,
+                                    posterPath: movie.poster_path,
+                                    status: "watchlist",
+                                    isFavorite: false
+                                });
                                 loadMovies();
                             }}
                         >
@@ -76,31 +73,69 @@ export default function Movies() {
             <hr />
 
             {movies.map((movie) => (
-            <div key={movie.id}>
-                Movie ID: {movie.tmdbMovieId} | {movie.status} 
+            <div
+                key={movie.id}
+                style={{
+                display: "flex",
+                gap: "16px",
+                marginBottom: "20px",
+                alignItems: "center",
+                border: "1px solid #ddd",
+                padding: "10px",
+                borderRadius: "10px",
+                }}
+            >
+                {/* Poster + Title */}
+                <div style={{ textAlign: "center" }}>
+                <img
+                    src={
+                    movie.movie.posterPath
+                        ? `https://image.tmdb.org/t/p/w200${movie.movie.posterPath}`
+                        : "https://via.placeholder.com/100x150"
+                    }
+                    alt={movie.movie.title}
+                    style={{ width: "100px", borderRadius: "8px" }}
+                />
+
+                <div style={{ marginTop: "5px", fontWeight: "bold" }}>
+                    {movie.movie.title}
+                </div>
+                </div>
+
+                {/* Info */}
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                <div>
+                    <strong>Status:</strong> {movie.status}
+                </div>
+
+                <div>
+                    <strong>Favorite:</strong>{" "}
+                    {movie.isFavorite ? "Yes ❤️" : "No"}
+                </div>
+
                 <button
                     onClick={async () => {
-                        await updateMovie(movie.id, {
-                            status: movie.status=="watched" ? "watchlist" : "watched",
-                            isFavorite: movie.isFavorite
-                        });
+                    await updateMovie(movie.id, {
+                        status: movie.status === "watched" ? "watchlist" : "watched",
+                        isFavorite: movie.isFavorite,
+                    });
 
-                        const updated = await getMovies();
-                        setMovies(updated);
+                    const updated = await getMovies();
+                    setMovies(updated);
                     }}
-                > Toggle Status</button>
-                | Favorite:{" "}
-                {movie.isFavorite ? "Yes" : "No"}
+                >
+                    Toggle Status
+                </button>
 
                 <button
                     onClick={async () => {
-                        await updateMovie(movie.id, {
-                            status: movie.status,
-                            isFavorite: !movie.isFavorite,
-                        });
+                    await updateMovie(movie.id, {
+                        status: movie.status,
+                        isFavorite: !movie.isFavorite,
+                    });
 
-                        const updated = await getMovies();
-                        setMovies(updated);
+                    const updated = await getMovies();
+                    setMovies(updated);
                     }}
                 >
                     Toggle Favorite
@@ -108,16 +143,18 @@ export default function Movies() {
 
                 <button
                     onClick={async () => {
-                        await deleteMovie(movie.id)
+                    await deleteMovie(movie.id);
 
-                        const updated = await getMovies();
-                        setMovies(updated);
+                    const updated = await getMovies();
+                    setMovies(updated);
                     }}
+                    style={{ color: "red" }}
                 >
                     Delete Movie
                 </button>
+                </div>
             </div>
-        ))}
+            ))}
         </div>
     );
 }

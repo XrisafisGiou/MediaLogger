@@ -26,13 +26,26 @@ enum MovieStatus {
 }
 
 model UserMovie {
-  id            Int    @id @default(autoincrement())
-  userId        Int
-  tmdbMovieId   Int
-  status        MovieStatus
+  id          Int @id @default(autoincrement())
+
+  userId      Int
+  movieId     Int
+
+  status      MovieStatus
   isFavorite  Boolean @default(false)
 
-  user          User   @relation(fields: [userId], references: [id])    
+  user         User  @relation(fields: [userId], references: [id])
+  movie        Movie @relation(fields: [movieId], references: [id])
 
-  @@unique([userId, tmdbMovieId])
+  @@unique([userId, movieId])
+}
+
+model Movie {
+  id          Int    @id @default(autoincrement())
+  tmdbMovieId Int    @unique
+
+  title       String
+  posterPath  String?
+
+  userMovies  UserMovie[]
 }

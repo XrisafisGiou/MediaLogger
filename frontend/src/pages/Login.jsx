@@ -37,6 +37,10 @@ export default function Login() {
 
         <button type="submit">Login</button>
       </form>
+
+      <button type="button"onClick={() => window.location.href = "/register"}>
+        Register
+      </button>
     </div>
   );
 }
