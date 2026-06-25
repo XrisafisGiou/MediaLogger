@@ -26,10 +26,19 @@ export default function Movies() {
     setSearchResults(data.results);
 }
 
+function handleLogout() {
+  localStorage.removeItem("token");
+  window.location.href = "/"
+}
+
   return (
         <div>
             <h1>My Movies</h1>
 
+            <button onClick={handleLogout}>
+                Logout
+            </button>
+            
             <h2>Search Movies</h2>
 
             <form onSubmit={handleSearch}>
