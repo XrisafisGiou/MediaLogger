@@ -68,7 +68,7 @@ export default function Movies() {
             <div className="p-1 text-xs font-semibold text-center truncate">
               {movie.title}
             </div>
-
+            {/*b*/}
             <button
               onClick={async () => {
                 await addMovie({
