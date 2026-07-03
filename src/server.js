@@ -17,8 +17,8 @@ app.get('/', (req,res) =>{
     res.send('hi')
 })
 
-app.use("/users",userRouter)
-app.use("/movies", movieRouter);
+app.use("/api/users",userRouter)
+app.use("/api/movies", movieRouter);
 
 app.listen(3000, () => {
   console.log("Server running on port 3000");

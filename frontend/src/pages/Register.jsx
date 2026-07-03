@@ -1,7 +1,7 @@
 import { useState } from "react";
 import bg from "../assets/bg_image.png";
 
-const API_URL = "http://localhost:3000";
+const API_URL = "/api";
 
 export default function Register() {
     const [username, setUsername] = useState("");

@@ -1,88 +1,47 @@
-const API_URL = "http://localhost:3000";
+import axios from "axios";
 
-export async function login(username, password) {
-  const res = await fetch(`${API_URL}/users/login`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ username, password }),
-  });
+const api = axios.create({
+  baseURL: "/api",
+});
 
-  return res.json();
-}
-
-export async function register(username, password) {
-  const res = await fetch(`${API_URL}/users/register`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ username, password }),
-  });
-
-  return res.json();
-}
-
-export async function getMovies() {
+api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
 
-  const res = await fetch(`${API_URL}/movies`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
 
-  return res.json();
-}
+  return config;
+});
 
-export async function addMovie(data) {
-  const token = localStorage.getItem("token");
+api.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    if (err.response?.status === 401) {
+      localStorage.removeItem("token");
+      window.location.href = "/";
+    }
+    return Promise.reject(err);
+  }
+);
 
-  const res = await fetch(`${API_URL}/movies`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(data),
-    });
+export const login = (username, password) =>
+  api.post("/users/login", { username, password }).then((r) => r.data);
 
-  return res.json();
-}
+export const register = (username, password) =>
+  api.post("/users/register", { username, password }).then((r) => r.data);
 
-export async function updateMovie(id, data) {
-    const token = localStorage.getItem("token");
+export const getMovies = () =>
+  api.get("/movies").then((r) => r.data);
 
-    const res = await fetch(`${API_URL}/movies/${id}`, {
-        method: "PATCH",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(data),
-    });
+export const addMovie = (data) =>
+  api.post("/movies", data).then((r) => r.data);
 
-    return res.json();
-}
+export const updateMovie = (id, data) =>
+  api.patch(`/movies/${id}`, data).then((r) => r.data);
 
-export async function deleteMovie(id) {
-    const token = localStorage.getItem("token");
+export const deleteMovie = (id) =>
+  api.delete(`/movies/${id}`).then((r) => r.data);
 
-    const res = await fetch(`${API_URL}/movies/${id}`, {
-        method: "DELETE",
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
-
-    return res.json();
-}
-
-export async function searchMovies(query) {
-    const res = await fetch(
-        `${import.meta.env.VITE_TMDB_BASE_URL}/search/movie?api_key=${import.meta.env.VITE_TMDB_API_KEY}&query=${encodeURIComponent(query)}`
-    );
-
-    return res.json();
-}
+export const searchMovies = (query) =>
+  api.get(`/movies/search?q=${query}`).then((r) => r.data);
