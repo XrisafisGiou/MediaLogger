@@ -6,6 +6,7 @@ import { register as registerUser } from "../services/api.js";
 export default function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [repeatPassword, setRepeatPassword] = useState("");
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -15,10 +16,18 @@ export default function Register() {
 
   function validate() {
     const errors = {};
+
     if (!username.trim()) errors.username = "Username is required!";
     if (!password.trim()) errors.password = "Password is required!";
     else if (password.length < 4)
       errors.password = "Password must be at least 4 characters!";
+
+    if (!repeatPassword.trim()) {
+      errors.repeatPassword = "Please repeat your password!";
+    } else if (repeatPassword !== password) {
+      errors.repeatPassword = "Passwords do not match!";
+    }
+
     return errors;
   }
 
@@ -27,7 +36,11 @@ export default function Register() {
     setError("");
 
     const errors = validate();
-    setTouched({ username: true, password: true });
+    setTouched({
+      username: true,
+      password: true,
+      repeatPassword: true,
+    });
 
     if (Object.keys(errors).length > 0) return;
 
@@ -36,14 +49,15 @@ export default function Register() {
 
       const data = await registerUser(username, password);
 
-      if (data?.message || data?.id || data?.success) {
+      if (data?.user?.id) {
         navigate("/");
       } else {
         setError("Registration failed!");
       }
     } catch (err) {
       setError(
-        err?.response?.data?.error || "Something went wrong during registration!"
+        err?.response?.data?.error ||
+          "Something went wrong during registration!"
       );
     } finally {
       setLoading(false);
@@ -95,6 +109,28 @@ export default function Register() {
           />
           {touched.password && errors.password && (
             <p className="text-red-500 text-xs">{errors.password}</p>
+          )}
+        </div>
+
+        <div>
+          <input
+            type="password"
+            placeholder="Repeat Password"
+            value={repeatPassword}
+            onChange={(e) => setRepeatPassword(e.target.value)}
+            onBlur={() =>
+              setTouched((t) => ({ ...t, repeatPassword: true }))
+            }
+            className={`border p-2 rounded w-full ${
+              touched.repeatPassword && errors.repeatPassword
+                ? "border-red-500"
+                : ""
+            }`}
+          />
+          {touched.repeatPassword && errors.repeatPassword && (
+            <p className="text-red-500 text-xs">
+              {errors.repeatPassword}
+            </p>
           )}
         </div>
 
