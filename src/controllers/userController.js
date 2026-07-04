@@ -15,7 +15,7 @@ export async function register(req, res) {
         });
 
         if (existingUser) {
-            return res.status(400).json({ error: "User already exists" });
+            return res.status(400).json({ error: "User already exists!" });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -25,7 +25,7 @@ export async function register(req, res) {
                 passwordHash: hashedPassword,
             },
         });
-        res.json({message: "User created successfully",
+        res.json({message: "User created successfully!",
             user: {
                 id: user.id,
                 username: user.username,

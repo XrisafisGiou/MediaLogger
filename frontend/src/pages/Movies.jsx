@@ -7,6 +7,8 @@ import {
   searchMovies,
 } from "../services/api.js";
 import { Eye, Heart, Trash2, LogOut, Bookmark } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const iconSize = 30;
 
@@ -16,6 +18,10 @@ export default function Movies() {
   const [searchResults, setSearchResults] = useState([]);
   const [activeTab, setActiveTab] = useState("watched");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState("");
 
   async function loadMovies() {
     const data = await getMovies();
@@ -23,8 +29,8 @@ export default function Movies() {
   }
 
   function handleLogout() {
-  localStorage.removeItem("token");
-  window.location.href = "/"
+    logout();
+    navigate("/");
   }
 
   useEffect(() => {
@@ -34,12 +40,29 @@ export default function Movies() {
   useEffect(() => {
   if (!searchQuery.trim()) {
     setSearchResults([]);
+    setSearchError("");
     return;
   }
 
   const delay = setTimeout(async () => {
-    const data = await searchMovies(searchQuery);
-    setSearchResults(data.results || []);
+    try {
+      setIsSearching(true);
+      setSearchError("");
+
+      const data = await searchMovies(searchQuery);
+
+      const results = data.results || [];
+      setSearchResults(results);
+
+      if (results.length === 0) {
+        setSearchError("No movies found.");
+      }
+    } catch (err) {
+      setSearchError("Something went wrong.");
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
   }, 400);
 
   return () => clearTimeout(delay);
@@ -71,13 +94,13 @@ export default function Movies() {
         />
       </div>
 
-      {isSearchOpen && (
+    {isSearchOpen && (
         <div
           className="fixed inset-0 bg-black/90 backdrop-blur-md z-50 p-6 overflow-y-auto"
           onClick={() => setIsSearchOpen(false)}
         >
           <div
-            className="w-full min-h-full p-6 "
+            className="w-full min-h-full p-6"
             onClick={(e) => e.stopPropagation()}
           >
 
@@ -96,67 +119,85 @@ export default function Movies() {
               className="w-full p-3 rounded bg-white/10 text-white border border-white/20 mb-6"
             />
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-7 gap-3">
+            {searchError && (
+              <div className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-center text-red-300">
+                {searchError}
+              </div>
+            )}
 
-              {searchResults.map((movie) => (
-                <div
-                  key={movie.id}
-                  className="bg-white/10 rounded overflow-hidden"
-                >
-                  <img
-                    src={`https://image.tmdb.org/t/p/w342${movie.poster_path}`}
-                    className="w-full"
-                  />
+            <div className="relative">
 
-                  <div className="text-xs text-center p-1 truncate">
-                    {movie.title}
-                  </div>
+              {isSearching && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-white z-10">
 
-                  <div className="flex gap-2 p-2">
+                  <p className="text-2xl font-semibold">
+                    Searching movies...
+                  </p>
 
-                    <button
-                      title="Mark as Watched"
-                      onClick={async () => {
-                        await addMovie({
-                          tmdbMovieId: movie.id,
-                          title: movie.title,
-                          posterPath: movie.poster_path,
-                          status: "watched",
-                          isFavorite: false,
-                        });
-
-                        loadMovies();
-                      }}
-                      className="flex-1 flex justify-center items-center p-2 rounded bg-white/10 hover:bg-blue-500/30 transition"
-                    >
-                      <Eye size={18} className="text-blue-400" />
-                    </button>
-
-                    <button
-                      title="Add to Watchlist"
-                      onClick={async () => {
-                        await addMovie({
-                          tmdbMovieId: movie.id,
-                          title: movie.title,
-                          posterPath: movie.poster_path,
-                          status: "watchlist",
-                          isFavorite: false,
-                        });
-
-                        loadMovies();
-                      }}
-                      className="flex-1 flex justify-center items-center p-2 rounded bg-white/10 hover:bg-purple-500/30 transition"
-                    >
-                      <Bookmark size={18} className="text-purple-300" />
-                    </button>
-
-                  </div>
                 </div>
-              ))}
+              )}
 
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-7 gap-3 opacity-100">
+
+                {searchResults.map((movie) => (
+                  <div
+                    key={movie.id}
+                    className="bg-white/10 rounded overflow-hidden"
+                  >
+                    <img
+                      src={`https://image.tmdb.org/t/p/w342${movie.poster_path}`}
+                      className="w-full"
+                    />
+
+                    <div className="text-xs text-center p-1 truncate">
+                      {movie.title}
+                    </div>
+
+                    <div className="flex gap-2 p-2">
+
+                      <button
+                        onClick={async () => {
+                          await addMovie({
+                            tmdbMovieId: movie.id,
+                            title: movie.title,
+                            posterPath: movie.poster_path,
+                            status: "watched",
+                            isFavorite: false,
+                          });
+
+                          loadMovies();
+                        }}
+                        className="flex-1 flex justify-center items-center p-2 rounded bg-white/10 hover:bg-blue-500/30 transition"
+                      >
+                        <Eye size={18} className="text-blue-400" />
+                      </button>
+
+                      <button
+                        onClick={async () => {
+                          await addMovie({
+                            tmdbMovieId: movie.id,
+                            title: movie.title,
+                            posterPath: movie.poster_path,
+                            status: "watchlist",
+                            isFavorite: false,
+                          });
+
+                          loadMovies();
+                        }}
+                        className="flex-1 flex justify-center items-center p-2 rounded bg-white/10 hover:bg-purple-500/30 transition"
+                      >
+                        <Bookmark size={18} className="text-purple-300" />
+                      </button>
+
+                    </div>
+                  </div>
+                ))}
+
+              </div>
+
+            </div>
           </div>
         </div>
-      </div>
       )}
       <div className="flex gap-3 mb-6">
 

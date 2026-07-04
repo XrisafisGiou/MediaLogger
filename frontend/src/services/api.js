@@ -4,6 +4,10 @@ const api = axios.create({
   baseURL: "/api",
 });
 
+const tmdb = axios.create({
+  baseURL: import.meta.env.VITE_TMDB_BASE_URL,
+});
+
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
 
@@ -25,6 +29,17 @@ api.interceptors.response.use(
   }
 );
 
+tmdb.interceptors.request.use((config) => {
+  config.params = {
+    ...config.params,
+    api_key: import.meta.env.VITE_TMDB_API_KEY,
+    language: "en-US",
+    include_adult: false,
+  };
+
+  return config;
+});
+
 export const login = (username, password) =>
   api.post("/users/login", { username, password }).then((r) => r.data);
 
@@ -44,4 +59,8 @@ export const deleteMovie = (id) =>
   api.delete(`/movies/${id}`).then((r) => r.data);
 
 export const searchMovies = (query) =>
-  api.get(`/movies/search?q=${query}`).then((r) => r.data);
+  tmdb
+    .get("/search/movie", {
+      params: { query },
+    })
+    .then((r) => r.data);
