@@ -5,6 +5,7 @@ import {
   updateMovie,
   deleteMovie,
   searchMovies,
+  checkMovie
 } from "../services/api.js";
 import { Eye, Heart, Trash2, LogOut, Bookmark } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -22,6 +23,7 @@ export default function Movies() {
   const navigate = useNavigate();
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState("");
+  const [existingMovies, setExistingMovies] = useState({});
 
   async function loadMovies() {
     const data = await getMovies();
@@ -38,35 +40,52 @@ export default function Movies() {
   }, []);
 
   useEffect(() => {
-  if (!searchQuery.trim()) {
-    setSearchResults([]);
-    setSearchError("");
-    return;
+    if (!searchQuery.trim()) {
+      setSearchResults([]);
+      setSearchError("");
+      return;
+    }
+
+    const delay = setTimeout(async () => {
+      try {
+        setIsSearching(true);
+        setSearchError("");
+
+        const data = await searchMovies(searchQuery);
+
+        const results = data.results || [];
+        setSearchResults(results);
+
+        if (results.length === 0) {
+          setSearchError("No movies found.");
+        }
+      } catch (err) {
+        setSearchError("Something went wrong.");
+        setSearchResults([]);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 400);
+
+    return () => clearTimeout(delay);
+}, [searchQuery]);
+
+useEffect(() => {
+  async function loadExisting() {
+    const data = await getMovies();
+
+    const map = {};
+    data.forEach((m) => {
+      map[m.movie.tmdbMovieId] = {
+        status: m.status,
+      };
+    });
+
+    setExistingMovies(map);
   }
 
-  const delay = setTimeout(async () => {
-    try {
-      setIsSearching(true);
-      setSearchError("");
-
-      const data = await searchMovies(searchQuery);
-
-      const results = data.results || [];
-      setSearchResults(results);
-
-      if (results.length === 0) {
-        setSearchError("No movies found.");
-      }
-    } catch (err) {
-      setSearchError("Something went wrong.");
-      setSearchResults([]);
-    } finally {
-      setIsSearching(false);
-    }
-  }, 400);
-
-  return () => clearTimeout(delay);
-}, [searchQuery]);
+  loadExisting();
+}, [movies]);
 
   const displayedMovies = movies.filter((movie) => movie.status === activeTab);
 
@@ -139,59 +158,77 @@ export default function Movies() {
 
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-7 gap-3 opacity-100">
 
-                {searchResults.map((movie) => (
-                  <div
-                    key={movie.id}
-                    className="bg-white/10 rounded overflow-hidden"
-                  >
-                    <img
-                      src={`https://image.tmdb.org/t/p/w342${movie.poster_path}`}
-                      className="w-full"
-                    />
+                {searchResults.map((movie) => {
+                  const statusInfo = existingMovies[movie.id];
+                  const isInLibrary = !!statusInfo;
 
-                    <div className="text-xs text-center p-1 truncate">
-                      {movie.title}
+                  return (
+                    <div
+                      key={movie.id}
+                      className="bg-white/10 rounded overflow-hidden"
+                    >
+                      <img
+                        src={`https://image.tmdb.org/t/p/w342${movie.poster_path}`}
+                        className="w-full cursor-pointer"
+                        onClick={() => navigate(`/movie/${movie.id}`)}
+                      />
+
+                      {isInLibrary ? (
+                      <div className="text-xs text-center text-green-400 py-2">
+                        {statusInfo.status === "watched" ? (
+                          <div className="flex items-center justify-center gap-1">
+                            <Eye size={14} />
+                            <span>Watched</span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-center gap-1">
+                            <Bookmark size={14} />
+                            <span>Watchlist</span>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="flex gap-2 p-2">
+
+                        <button
+                          onClick={async () => {
+                            await addMovie({
+                              tmdbMovieId: movie.id,
+                              title: movie.title,
+                              posterPath: movie.poster_path,
+                              status: "watched",
+                              isFavorite: false,
+                            });
+
+                            loadMovies();
+                          }}
+                          className="flex-1 flex justify-center p-2 rounded bg-white/10 hover:bg-blue-500/30"
+                        >
+                          <Eye size={18} />
+                        </button>
+
+                        <button
+                          onClick={async () => {
+                            await addMovie({
+                              tmdbMovieId: movie.id,
+                              title: movie.title,
+                              posterPath: movie.poster_path,
+                              status: "watchlist",
+                              isFavorite: false,
+                            });
+
+                            loadMovies();
+                          }}
+                          className="flex-1 flex justify-center p-2 rounded bg-white/10 hover:bg-purple-500/30"
+                        >
+                          <Bookmark size={18} />
+                        </button>
+
+                      </div>
+                    )}
                     </div>
-
-                    <div className="flex gap-2 p-2">
-
-                      <button
-                        onClick={async () => {
-                          await addMovie({
-                            tmdbMovieId: movie.id,
-                            title: movie.title,
-                            posterPath: movie.poster_path,
-                            status: "watched",
-                            isFavorite: false,
-                          });
-
-                          loadMovies();
-                        }}
-                        className="flex-1 flex justify-center items-center p-2 rounded bg-white/10 hover:bg-blue-500/30 transition"
-                      >
-                        <Eye size={18} className="text-blue-400" />
-                      </button>
-
-                      <button
-                        onClick={async () => {
-                          await addMovie({
-                            tmdbMovieId: movie.id,
-                            title: movie.title,
-                            posterPath: movie.poster_path,
-                            status: "watchlist",
-                            isFavorite: false,
-                          });
-
-                          loadMovies();
-                        }}
-                        className="flex-1 flex justify-center items-center p-2 rounded bg-white/10 hover:bg-purple-500/30 transition"
-                      >
-                        <Bookmark size={18} className="text-purple-300" />
-                      </button>
-
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
 
               </div>
 
@@ -239,7 +276,10 @@ export default function Movies() {
                   : "https://via.placeholder.com/342x513"
               }
               alt={movie.movie?.title}
-              className="w-full object-cover"
+              className="w-full object-cover cursor-pointer"
+              onClick={() =>
+                navigate(`/movie/${movie.movie.tmdbMovieId}`)
+              }
             />
 
             <div className="p-1 text-xs font-semibold text-center truncate">

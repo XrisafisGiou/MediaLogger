@@ -1,43 +1,53 @@
 import prisma from "../lib/prisma.js";
 
 export async function addMovie(req, res) {
-    try {
-        const userId = req.user.userId;
-        const { tmdbMovieId, title, posterPath, status, isFavorite } = req.body;
+  try {
+    const userId = req.user.userId;
+    const { tmdbMovieId, title, posterPath, status, isFavorite } = req.body;
 
-        if (!tmdbMovieId || !status) {
-            return res.status(400).json({ error: "tmdbMovieId and status are required"});
-        }
-
-        //Check if movie exists
-        let movie = await prisma.movie.findUnique({
-            where: { tmdbMovieId },
-        });
-
-        if (!movie) {
-            movie = await prisma.movie.create({
-                data: {
-                    tmdbMovieId,
-                    title,
-                    posterPath,
-                },
-            });
-        }
-
-        const userMovie = await prisma.userMovie.create({
-            data: {
-                userId,
-                movieId: movie.id,
-                status,
-                isFavorite: isFavorite ?? false,
-            },
-        });
-
-        return res.json(userMovie);
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: "Server error!" });
+    if (!tmdbMovieId || !status) {
+      return res.status(400).json({ error: "tmdbMovieId and status are required" });
     }
+
+    let movie = await prisma.movie.findUnique({
+      where: { tmdbMovieId },
+    });
+
+    if (!movie) {
+      movie = await prisma.movie.create({
+        data: {
+          tmdbMovieId,
+          title,
+          posterPath,
+        },
+      });
+    }
+
+    const userMovie = await prisma.userMovie.upsert({
+      where: {
+        userId_movieId: {
+          userId,
+          movieId: movie.id,
+        },
+      },
+      update: {
+        status,
+        isFavorite: isFavorite ?? false,
+      },
+      create: {
+        userId,
+        movieId: movie.id,
+        status,
+        isFavorite: isFavorite ?? false,
+      },
+    });
+
+    return res.json(userMovie);
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Server error!" });
+  }
 }
 
 export async function getMovies(req, res) {
@@ -118,4 +128,25 @@ export const deleteMovie = async (req, res) => {
         console.error(error);
         return res.status(500).json({ error: "Server error!" });
     }
+}
+
+export async function checkMovie(req, res) {
+  try {
+    const userId = req.user.userId;
+    const tmdbMovieId = Number(req.params.tmdbId);
+
+    const movie = await prisma.userMovie.findFirst({
+      where: {
+        userId,
+        movieId: tmdbMovieId,
+      },
+    });
+
+    return res.json({
+      exists: !!movie,
+      status: movie?.status || null,
+    });
+  } catch (err) {
+    return res.status(500).json({ error: "Server error" });
+  }
 }

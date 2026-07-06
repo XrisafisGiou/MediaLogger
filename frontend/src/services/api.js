@@ -64,3 +64,9 @@ export const searchMovies = (query) =>
       params: { query },
     })
     .then((r) => r.data);
+
+export const getMovieDetails = (id) =>
+  tmdb.get(`/movie/${id}`).then((r) => r.data);
+
+export const checkMovie = (tmdbId) =>
+  api.get(`/movies/check/${tmdbId}`).then((r) => r.data);
