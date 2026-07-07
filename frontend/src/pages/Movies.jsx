@@ -7,7 +7,7 @@ import {
   searchMovies,
 } from "../services/api.js";
 import { Eye, Heart, Trash2, LogOut, Bookmark, User } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import ConfirmModal from "../components/ConfirmModal.jsx";
 
@@ -17,7 +17,8 @@ export default function Movies() {
   const [movies, setMovies] = useState([]);
   const [searchQuery, setSearchQuery] = useState(""); 
   const [searchResults, setSearchResults] = useState([]);
-  const [activeTab, setActiveTab] = useState("watched");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get("tab") || "watched";
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { logout } = useAuth();
   const navigate = useNavigate();
@@ -250,7 +251,7 @@ useEffect(() => {
       <div className="flex gap-3 mb-6">
 
       <button
-        onClick={() => setActiveTab("watched")}
+        onClick={() => setSearchParams({ tab: "watched" })}
         className={`px-5 py-2 rounded-full border transition ${
           activeTab === "watched"
             ? "bg-purple-600 border-purple-600 text-white"
@@ -261,7 +262,7 @@ useEffect(() => {
       </button>
 
       <button
-        onClick={() => setActiveTab("watchlist")}
+        onClick={() => setSearchParams({ tab: "watchlist" })}
         className={`px-5 py-2 rounded-full border transition ${
           activeTab === "watchlist"
             ? "bg-purple-600 border-purple-600 text-white"

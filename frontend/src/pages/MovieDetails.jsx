@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { addMovie, updateMovie, deleteMovie, getMovieDetails, getMovieStatus, getMovieImages, getMovieCredits } from "../services/api.js";
-import { Eye, Bookmark, ArrowLeft, UserRound } from "lucide-react";
+import { Eye, Bookmark, ArrowLeft, UserRound, Clapperboard } from "lucide-react";
 
 const iconSize = 30;
 
@@ -18,6 +18,7 @@ export default function MovieDetails() {
   const [screenshotIndex, setScreenshotIndex] = useState(0);
   const [cast, setCast] = useState([]);
   const [castIndex, setCastIndex] = useState(0);
+  const [director, setDirector] = useState("");
   
  useEffect(() => {
   async function load() {
@@ -36,6 +37,7 @@ export default function MovieDetails() {
 
       const credits = await getMovieCredits(tmdbId);
       setCast(credits.cast?.slice(0, 10) || []);
+      setDirector(credits.crew.find(person => person.job === "Director")?.name || "");
 
     } catch(err) {
       setError("Movie not found");
@@ -134,7 +136,7 @@ function previousActor() {
     <div className="relative z-10 p-6 max-w-6xl mx-auto">
 
       <button
-        onClick={() => navigate("/movies")}
+        onClick={() => navigate(-1)}
         className="mb-6 flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition"
         >
         <ArrowLeft size={18} />
@@ -159,6 +161,8 @@ function previousActor() {
             <span>⭐ {movie.vote_average?.toFixed(1)}</span>
             <span>•</span>
             <span>⏱ {movie.runtime ? `${movie.runtime} min` : "N/A"}</span> 
+            <span>•</span>
+            <span className="flex items-center gap-1"><Clapperboard size={18} />{director}</span>
           </div>
 
           <h2 className="text-lg font-semibold mt-4 mb-1">
