@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { addMovie, updateMovie, deleteMovie, getMovieDetails, getMovieStatus, getMovieImages, getMovieCredits } from "../services/api.js";
-import { Eye, Bookmark, ArrowLeft, UserRound, Clapperboard } from "lucide-react";
+import { Eye, Bookmark, ArrowLeft, UserRound, Clapperboard, ImageOff } from "lucide-react";
 
 const iconSize = 30;
 
@@ -150,11 +150,33 @@ function previousActor() {
 
       <div className="flex flex-col md:flex-row gap-8">
 
-        <img
-          src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-          className="w-72 rounded-xl shadow-2xl"
-          alt={movie.title}
-        />
+        {movie.poster_path ? (
+          <img
+            src={`https://image.tmdb.org/t/p/w342${movie.poster_path}`}
+            className="w-72 rounded-xl shadow-2xl"
+            onClick={() => navigate(`/movie/${movie.id}`)}
+            alt={movie.title}
+          />
+        ) : (
+          <div
+            className="
+              w-72
+              aspect-[2/3]
+              flex
+              flex-col
+              items-center
+              justify-center
+              bg-white/10
+              transition
+            "
+          >
+            <ImageOff
+              size={60}
+              className="text-white/85"
+            />
+
+          </div>
+        )}
 
         <div className="flex flex-col gap-4">
 

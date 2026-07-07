@@ -6,7 +6,7 @@ import {
   deleteMovie,
   searchMovies,
 } from "../services/api.js";
-import { Eye, Heart, Trash2, LogOut, Bookmark, User } from "lucide-react";
+import { Eye, Heart, Trash2, LogOut, Bookmark, User, ImageOff } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import ConfirmModal from "../components/ConfirmModal.jsx";
@@ -190,11 +190,36 @@ useEffect(() => {
                       key={movie.id}
                       className="bg-white/10 rounded overflow-hidden"
                     >
-                      <img
-                        src={`https://image.tmdb.org/t/p/w342${movie.poster_path}`}
-                        className="w-full cursor-pointer"
-                        onClick={() => navigate(`/movie/${movie.id}`)}
-                      />
+                      {movie.poster_path ? (
+                        <img
+                          src={`https://image.tmdb.org/t/p/w342${movie.poster_path}`}
+                          className="w-full cursor-pointer object-cover aspect-[2/3]"
+                          onClick={() => navigate(`/movie/${movie.id}`)}
+                          alt={movie.title}
+                        />
+                      ) : (
+                        <div
+                          className="
+                            w-full
+                            aspect-[2/3]
+                            flex
+                            flex-col
+                            items-center
+                            justify-center
+                            bg-white/10
+                            cursor-pointer
+                            hover:bg-white/20
+                            transition
+                          "
+                          onClick={() => navigate(`/movie/${movie.id}`)}
+                        >
+                          <ImageOff
+                            size={60}
+                            className="text-white/85"
+                          />
+
+                        </div>
+                      )}
 
                       {isInLibrary ? (
                       <div className="text-xs text-center text-green-400 py-2">
@@ -316,18 +341,36 @@ useEffect(() => {
             className="bg-white/10 border border-white/10 rounded-md overflow-hidden flex flex-col"
           >
 
-            <img
-              src={
-                movie.movie?.posterPath
-                  ? `https://image.tmdb.org/t/p/w342${movie.movie.posterPath}`
-                  : "https://via.placeholder.com/342x513"
-              }
-              alt={movie.movie?.title}
-              className="w-full object-cover cursor-pointer"
-              onClick={() =>
-                navigate(`/movie/${movie.movie.tmdbMovieId}`)
-              }
-            />
+            {movie.movie.posterPath ? (
+              <img
+                src={`https://image.tmdb.org/t/p/w342${movie.movie.posterPath}`}
+                className="w-full cursor-pointer object-cover"
+                onClick={() => navigate(`/movie/${movie.movie.tmdbMovieId}`)}
+                alt={movie.movie?.title}
+              />
+            ) : (
+              <div
+                className="
+                  w-full
+                  aspect-[2/3]
+                  flex
+                  flex-col
+                  items-center
+                  justify-center
+                  bg-white/10
+                  cursor-pointer
+                  hover:bg-white/20
+                  transition
+                "
+                onClick={() => navigate(`/movie/${movie.movie.tmdbMovieId}`)}
+              >
+                <ImageOff
+                  size={60}
+                  className="text-white/85"
+                />
+
+              </div>
+            )}
 
             <div className="p-1 text-xs font-semibold text-center truncate">
               {movie.movie?.title}
