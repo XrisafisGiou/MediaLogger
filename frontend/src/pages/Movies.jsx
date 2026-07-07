@@ -5,11 +5,11 @@ import {
   updateMovie,
   deleteMovie,
   searchMovies,
-  checkMovie
 } from "../services/api.js";
-import { Eye, Heart, Trash2, LogOut, Bookmark } from "lucide-react";
+import { Eye, Heart, Trash2, LogOut, Bookmark, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import ConfirmModal from "../components/ConfirmModal.jsx";
 
 const iconSize = 30;
 
@@ -24,6 +24,7 @@ export default function Movies() {
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState("");
   const [existingMovies, setExistingMovies] = useState({});
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   async function loadMovies() {
     const data = await getMovies();
@@ -95,13 +96,23 @@ useEffect(() => {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">My Movies</h1>
 
-        <button
-          onClick={handleLogout}
-          className="p-2 rounded-full bg-white/10 border border-white/20 hover:bg-red-500/20 hover:border-red-400 transition"
-          title="Logout"
-        >
-          <LogOut size={18} />
-        </button>
+        <div className="flex gap-3">
+            <button
+              onClick={() => navigate("/profile")}
+              className="p-2 rounded-full border border-white/20 bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white transition"
+              title="Profile"
+            >
+              <User size={18} />
+            </button>
+
+            <button
+              onClick={handleLogout}
+              className="p-2 rounded-full bg-white/10 border border-white/20 hover:bg-red-500/20 hover:border-red-400 transition"
+              title="Logout"
+            >
+              <LogOut size={18} />
+            </button>
+        </div>
       </div>
 
       <div className="mb-6">
@@ -345,10 +356,7 @@ useEffect(() => {
 
               <button
                 title="Delete"
-                onClick={async () => {
-                  await deleteMovie(movie.id);
-                  setMovies(await getMovies());
-                }}
+                onClick={() => setDeleteTarget(movie)}
                 className="flex-1 flex justify-center items-center text-gray-400 hover:text-red-500 transition"
               >
                 <Trash2 size={iconSize} />
@@ -360,6 +368,18 @@ useEffect(() => {
         ))}
 
       </div>
+      {deleteTarget && (
+        <ConfirmModal
+          title="Remove Movie?"
+          message={`Are you sure you want to remove "${deleteTarget.movie?.title}" from your library?`}
+          onCancel={() => setDeleteTarget(null)}
+          onConfirm={async () => {
+            await deleteMovie(deleteTarget.id);
+            setMovies(await getMovies());
+            setDeleteTarget(null);
+          }}
+        />
+      )}
     </div>
   );
 }

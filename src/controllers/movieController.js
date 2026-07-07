@@ -136,17 +136,47 @@ export async function checkMovie(req, res) {
     const tmdbMovieId = Number(req.params.tmdbId);
 
     const movie = await prisma.userMovie.findFirst({
-      where: {
+    where: {
         userId,
         movieId: tmdbMovieId,
-      },
+    },
     });
 
-    return res.json({
-      exists: !!movie,
-      status: movie?.status || null,
-    });
+return res.json(movie);
   } catch (err) {
     return res.status(500).json({ error: "Server error" });
+  }
+}
+
+export async function getMovieStatus(req, res) {
+  try {
+    const userId = req.user.userId;
+    const tmdbMovieId = Number(req.params.tmdbId);
+
+    const userMovie = await prisma.userMovie.findFirst({
+      where: {
+        userId,
+        movie: {
+          tmdbMovieId
+        }
+      }
+    });
+
+    if (!userMovie) {
+      return res.json(null);
+    }
+
+    res.json({
+      id: userMovie.id,
+      status: userMovie.status,
+      isFavorite: userMovie.isFavorite
+    });
+
+  } catch(error) {
+    console.error(error);
+
+    res.status(500).json({
+      error: "Server error!"
+    });
   }
 }

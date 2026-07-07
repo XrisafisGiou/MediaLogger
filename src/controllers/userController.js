@@ -89,3 +89,67 @@ export async function identification(req,res) {
         return res.status(500).json({ error: "Server error!" });
     }
 }
+
+export async function changePassword(req, res) {
+    try {
+        const userId = req.user.userId;
+
+        const { oldPassword, newPassword } = req.body;
+
+        if (!oldPassword || !newPassword) {
+            return res.status(400).json({
+                error: "Passwords cannot be empty!"
+            });
+        }
+
+        const user = await prisma.user.findUnique({
+            where: {
+                id: userId
+            }
+        });
+
+        if (!user) {
+            return res.status(404).json({
+                error: "User not found!"
+            });
+        }
+
+        const correctPassword = await bcrypt.compare(
+            oldPassword,
+            user.passwordHash
+        );
+
+        if (!correctPassword) {
+            return res.status(400).json({
+                error: "Current password is incorrect!"
+            });
+        }
+
+        const hashedPassword = await bcrypt.hash(
+            newPassword,
+            10
+        );
+
+        await prisma.user.update({
+            where: {
+                id: userId
+            },
+            data: {
+                passwordHash: hashedPassword
+            }
+        });
+
+        res.json({
+            message: "Password changed successfully!"
+        });
+
+
+    } catch(error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            error: "Server error!"
+        });
+    }
+}

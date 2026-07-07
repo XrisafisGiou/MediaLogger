@@ -68,5 +68,33 @@ export const searchMovies = (query) =>
 export const getMovieDetails = (id) =>
   tmdb.get(`/movie/${id}`).then((r) => r.data);
 
-export const checkMovie = (tmdbId) =>
-  api.get(`/movies/check/${tmdbId}`).then((r) => r.data);
+export const getMovieStatus = (tmdbId) =>
+  api.get(`/movies/status/${tmdbId}`)
+     .then((r) => r.data);
+
+export const getCurrentUser = () =>
+  api.get("/users/me").then((r) => r.data);
+
+export const changePassword = (data) =>
+  api.patch("/users/password", data)
+     .then((r) => r.data);
+
+export const getMovieImages = async (tmdbId) => {
+  const res = await axios.get(
+    `${import.meta.env.VITE_TMDB_BASE_URL}/movie/${tmdbId}/images`,
+    {
+      params: {
+        api_key: import.meta.env.VITE_TMDB_API_KEY,
+      },
+    }
+  );
+
+  return res.data;
+};
+
+export const getMovieCredits = (tmdbId) =>
+  axios
+    .get(
+      `${import.meta.env.VITE_TMDB_BASE_URL}/movie/${tmdbId}/credits?api_key=${import.meta.env.VITE_TMDB_API_KEY}`
+    )
+    .then((r) => r.data);

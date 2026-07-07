@@ -5,6 +5,7 @@ import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import Movies from "./pages/Movies.jsx";
 import MovieDetails from "./pages/MovieDetails.jsx";
+import UserProfile from "./pages/UserProfile.jsx";
 
 function App() {
   return (
@@ -15,8 +16,24 @@ function App() {
         <Route path="/movies" element={
           <ProtectedRoute>
             <Movies />
-          </ProtectedRoute>} />
-        <Route path="/movie/:tmdbId" element={<MovieDetails />} />
+          </ProtectedRoute>} 
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <UserProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/movie/:tmdbId"
+          element={
+            <ProtectedRoute>
+              <MovieDetails />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
