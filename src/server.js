@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import userRouter from "./routes/users.js";
 import movieRouter from "./routes/movies.js";
+import tmdbRouter from "./routes/tmdb.js";
 import cors from "cors";
 
 const app = express();
@@ -19,6 +20,7 @@ app.get('/', (req,res) =>{
 
 app.use("/api/users",userRouter)
 app.use("/api/movies", movieRouter);
+app.use("/api/tmdb", tmdbRouter);
 
 app.listen(3000, () => {
   console.log("Server running on port 3000");

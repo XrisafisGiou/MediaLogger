@@ -26,6 +26,7 @@ export default function Movies() {
   const [searchError, setSearchError] = useState("");
   const [existingMovies, setExistingMovies] = useState({});
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [sortOption, setSortOption] = useState("recent");
 
   async function loadMovies() {
     const data = await getMovies();
@@ -89,7 +90,17 @@ useEffect(() => {
   loadExisting();
 }, [movies]);
 
-  const displayedMovies = movies.filter((movie) => movie.status === activeTab);
+  const displayedMovies = movies.filter((movie) => movie.status === activeTab).sort((a, b) => {
+    if (sortOption === "alphabetical") {
+      return a.movie.title.localeCompare(b.movie.title);
+    }
+
+    if (sortOption === "recent") {
+      return b.id - a.id;
+    }
+
+    return 0;
+  });
 
   return (
     <div className="min-h-screen p-6 bg-gradient-to-br from-black via-purple-950 to-black text-white">
@@ -272,7 +283,31 @@ useEffect(() => {
         Watchlist
       </button>
 
+       <select
+          value={sortOption}
+          onChange={(e) => setSortOption(e.target.value)}
+          className="
+            ml-auto
+            bg-white/10
+            border border-white/20
+            rounded-lg
+            px-3
+            py-2
+            text-white
+          "
+        >
+          <option value="recent" className="bg-black">
+            Recently Added
+          </option>
+
+          <option value="alphabetical" className="bg-black">
+            Alphabetical
+          </option>
+
+        </select>
+
     </div>
+    
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-7 gap-3">
 
         {displayedMovies.map((movie) => (

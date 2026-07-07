@@ -50,10 +50,14 @@ export default function MovieDetails() {
 
 }, [tmdbId]);
 
-  if (loading) {
+   if (loading) {
     return (
-      <div className="text-white p-6 text-center">
-        Loading movie...
+      <div className="min-h-screen bg-gradient-to-br from-black via-purple-950 to-black text-white flex flex-col items-center justify-center gap-4">
+
+        <p className="text-lg text-white/70 pulsating">
+          Loading movie...
+        </p>
+
       </div>
     );
   }
@@ -133,6 +137,7 @@ function previousActor() {
     />
 
     <div className="absolute inset-0 bg-black/70" />
+  
     <div className="relative z-10 p-6 max-w-6xl mx-auto">
 
       <button
