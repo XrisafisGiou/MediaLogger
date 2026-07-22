@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const tmdb = axios.create({
+const tmdbClient = axios.create({
   baseURL: process.env.TMDB_BASE_URL,
 });
 
-tmdb.interceptors.request.use((config) => {
+tmdbClient.interceptors.request.use((config) => {
   config.params = {
     ...config.params,
     api_key: process.env.TMDB_API_KEY,
@@ -14,4 +14,4 @@ tmdb.interceptors.request.use((config) => {
   return config;
 });
 
-export default tmdb;
+export default tmdbClient;

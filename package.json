@@ -9,7 +9,8 @@
   "scripts": {
     "devStart": "nodemon src/server.js",
     "client": "npm run dev --prefix frontend",
-    "dev": "concurrently \"npm run devStart\" \"npm run client\""
+    "dev": "concurrently \"npm run devStart\" \"npm run client\"",
+    "test": "node --test"
   },
   "devDependencies": {
     "concurrently": "^10.0.3",

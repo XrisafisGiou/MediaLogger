@@ -1,76 +1,24 @@
-import tmdb from "../services/tmdb.js";
+import tmdbService from "../services/tmdbService.js";
 
 export async function getMovieDetails(req, res) {
-  try {
-    const { id } = req.params;
-
-    const response = await tmdb.get(`/movie/${id}`);
-
-    res.json(response.data);
-
-  } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      error: "Failed to fetch movie details",
-    });
-  }
+  const movie = await tmdbService.getMovieDetails(req.params.id);
+  return res.json(movie);
 }
 
 
 export async function searchMovies(req, res) {
-  try {
-    const { query } = req.query;
-
-    const response = await tmdb.get("/search/movie", {
-      params: {
-        query,
-      },
-    });
-
-    res.json(response.data);
-
-  } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      error: "Failed to search movies",
-    });
-  }
+  const movies = await tmdbService.searchMovies(req.query.query);
+  return res.json(movies);
 }
 
 
 export async function getMovieImages(req, res) {
-  try {
-    const { id } = req.params;
-
-    const response = await tmdb.get(`/movie/${id}/images`);
-
-    res.json(response.data);
-
-  } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      error: "Failed to fetch movie images",
-    });
-  }
+  const images = await tmdbService.getMovieImages(req.params.id);
+  return res.json(images);
 }
 
 
 export async function getMovieCredits(req, res) {
-  try {
-    const { id } = req.params;
-
-    const response = await tmdb.get(`/movie/${id}/credits`);
-
-    res.json(response.data);
-
-  } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      error: "Failed to fetch movie credits",
-    });
-  }
+  const credits = await tmdbService.getMovieCredits(req.params.id);
+  return res.json(credits);
 }
