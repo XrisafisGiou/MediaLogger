@@ -1,19 +1,16 @@
 import { useEffect, useState } from "react";
+import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, LogOut } from "lucide-react";
-import { useAuth } from "../context/AuthContext";
-import { getCurrentUser, getMovies, changePassword } from "../services/api.js";
-
+import useAuth from "../context/useAuth";
+import { changePassword, getCurrentUser, getMovies } from "../services/api.js";
+import BackButton from "../components/common/BackButton";
+import StatGrid from "../components/common/StatGrid";
+import PageShell from "../components/layout/PageShell";
+import PasswordForm from "../components/profile/PasswordForm";
 
 export default function UserProfile() {
-
   const navigate = useNavigate();
   const { logout } = useAuth();
-  const [changingPassword, setChangingPassword] = useState(false);
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [passwordMessage, setPasswordMessage] = useState("");
-
   const [user, setUser] = useState(null);
   const [stats, setStats] = useState({
     watched: 0,
@@ -21,225 +18,57 @@ export default function UserProfile() {
     favorites: 0,
   });
 
-
   useEffect(() => {
-
     async function loadProfile() {
-
-      const userData = await getCurrentUser();
-      const movies = await getMovies();
+      const [userData, movies] = await Promise.all([
+        getCurrentUser(),
+        getMovies(),
+      ]);
 
       setUser(userData);
-
       setStats({
-        watched: movies.filter(
-          movie => movie.status === "watched"
-        ).length,
-
-        watchlist: movies.filter(
-          movie => movie.status === "watchlist"
-        ).length,
-
-        favorites: movies.filter(
-          movie => movie.isFavorite
-        ).length,
+        watched: movies.filter((movie) => movie.status === "watched").length,
+        watchlist: movies.filter((movie) => movie.status === "watchlist").length,
+        favorites: movies.filter((movie) => movie.isFavorite).length,
       });
-
     }
 
     loadProfile();
-
   }, []);
 
-
+  function handleLogout() {
+    logout();
+    navigate("/");
+  }
 
   return (
-    <div className="min-h-screen p-6 bg-gradient-to-br from-black via-purple-950 to-black text-white">
+    <PageShell contentClassName="mx-auto max-w-3xl p-6">
+      <BackButton onClick={() => navigate(-1)} className="mb-6" />
 
-      <div className="max-w-3xl mx-auto">
+      <section className="rounded-xl border border-white/20 bg-white/10 p-8">
+        <h1 className="mb-6 text-3xl font-bold">Profile</h1>
 
+        <p className="text-white/50">Username</p>
+        <p className="mb-8 text-xl">{user?.username}</p>
+
+        <StatGrid
+          items={[
+            { key: "watched", label: "Watched", value: stats.watched },
+            { key: "watchlist", label: "Watchlist", value: stats.watchlist },
+            { key: "favorites", label: "Favorites", value: stats.favorites },
+          ]}
+        />
+        <PasswordForm onSubmit={changePassword} />
 
         <button
-          onClick={() => navigate(-1)}
-          className="mb-6 flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition"
+          type="button"
+          onClick={handleLogout}
+          className="mt-8 flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/20 px-4 py-2 transition hover:bg-red-500/40"
         >
-          <ArrowLeft size={18}/>
-          Back
+          <LogOut size={18} aria-hidden="true" />
+          Logout
         </button>
-
-
-        <div className="bg-white/10 border border-white/20 rounded-xl p-8">
-
-
-          <h1 className="text-3xl font-bold mb-6">
-            Profile
-          </h1>
-
-
-          <p className="text-white/50">
-            Username
-          </p>
-
-          <p className="text-xl mb-8">
-            {user?.username}
-          </p>
-
-
-
-          <div className="grid grid-cols-3 gap-4">
-
-
-            <div className="bg-white/10 rounded-lg p-4 text-center">
-              <p className="text-2xl font-bold">
-                {stats.watched}
-              </p>
-
-              <p className="text-white/60">
-                Watched
-              </p>
-            </div>
-
-
-            <div className="bg-white/10 rounded-lg p-4 text-center">
-              <p className="text-2xl font-bold">
-                {stats.watchlist}
-              </p>
-
-              <p className="text-white/60">
-                Watchlist
-              </p>
-            </div>
-
-
-            <div className="bg-white/10 rounded-lg p-4 text-center">
-              <p className="text-2xl font-bold">
-                {stats.favorites}
-              </p>
-
-              <p className="text-white/60">
-                Favorites
-              </p>
-            </div>
-
-
-          </div>
-
-        <div className="mt-8 border-t border-white/20 pt-6">
-
-        <h2 className="text-xl font-bold mb-4">
-            Security
-        </h2>
-
-
-        {!changingPassword ? (
-
-            <button
-            onClick={() => {
-                setChangingPassword(true);
-                setPasswordMessage("");
-            }}
-            className="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 transition"
-            >
-            Change Password
-            </button>
-
-        ) : (
-
-            <div className="space-y-3">
-
-            <input
-                type="password"
-                placeholder="Current password"
-                value={oldPassword}
-                onChange={(e) => setOldPassword(e.target.value)}
-                className="w-full p-2 rounded bg-white/10 border border-white/20"
-            />
-
-
-            <input
-                type="password"
-                placeholder="New password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full p-2 rounded bg-white/10 border border-white/20"
-            />
-
-
-            <div className="flex gap-3">
-
-                <button
-                onClick={async () => {
-
-                    try {
-
-                    const data = await changePassword({
-                        oldPassword,
-                        newPassword
-                    });
-
-                    setPasswordMessage(data.message);
-
-                    setOldPassword("");
-                    setNewPassword("");
-                    setChangingPassword(false);
-
-                    } catch(err) {
-
-                    setPasswordMessage(
-                        err.response?.data?.error ||
-                        "Something went wrong"
-                    );
-
-                    }
-
-                }}
-                className="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 transition"
-                >
-                Save Password
-                </button>
-
-
-                <button
-                onClick={() => {
-                    setChangingPassword(false);
-                    setOldPassword("");
-                    setNewPassword("");
-                    setPasswordMessage("");
-                }}
-                className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition"
-                >
-                Cancel
-                </button>
-
-            </div>
-
-
-            </div>
-
-        )}
-
-
-        {passwordMessage && (
-            <p className="mt-3 text-sm text-white/80">
-            {passwordMessage}
-            </p>
-        )}
-
-        </div>
-
-          <button
-            onClick={() => {
-              logout();
-              navigate("/");
-            }}
-            className="mt-8 flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500/20 border border-red-500/30 hover:bg-red-500/40 transition"
-          >
-            <LogOut size={18}/>
-            Logout
-          </button>
-
-        </div>
-      </div>
-    </div>
+      </section>
+    </PageShell>
   );
 }
