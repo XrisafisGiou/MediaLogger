@@ -1,11 +1,13 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import AppLayout from "./components/layout/AppLayout";
 
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import Movies from "./pages/Movies.jsx";
 import MovieDetails from "./pages/MovieDetails.jsx";
 import UserProfile from "./pages/UserProfile.jsx";
+import TVShows from "./pages/TVShows.jsx";
 
 function App() {
   return (
@@ -13,27 +15,19 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/movies" element={
-          <ProtectedRoute>
-            <Movies />
-          </ProtectedRoute>} 
-        />
+
         <Route
-          path="/profile"
           element={
             <ProtectedRoute>
-              <UserProfile />
+              <AppLayout />
             </ProtectedRoute>
           }
-        />
-        <Route
-          path="/movie/:tmdbId"
-          element={
-            <ProtectedRoute>
-              <MovieDetails />
-            </ProtectedRoute>
-          }
-        />
+        >
+          <Route path="/movies" element={<Movies />} />
+          <Route path="/tv-shows" element={<TVShows />} />
+          <Route path="/movie/:tmdbId" element={<MovieDetails />} />
+          <Route path="/profile" element={<UserProfile />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

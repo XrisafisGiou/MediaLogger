@@ -14,7 +14,7 @@ export default function SearchModal({
 }) {
   return (
     <div
-      className="fixed inset-0 z-50 overflow-y-auto bg-black/90 p-6 backdrop-blur-md"
+      className="fixed inset-x-0 bottom-0 top-5 z-50 overflow-y-auto bg-black/90 p-6 backdrop-blur-md"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
