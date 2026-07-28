@@ -9,6 +9,8 @@ import MovieDetails from "./pages/MovieDetails.jsx";
 import UserProfile from "./pages/UserProfile.jsx";
 import TVShows from "./pages/TVShows.jsx";
 import TvShowDetails from "./pages/TvShowDetails.jsx";
+import Games from "./pages/Games.jsx";
+import GameDetails from "./pages/GameDetails.jsx";
 
 function App() {
   return (
@@ -26,8 +28,12 @@ function App() {
         >
           <Route path="/movies" element={<Movies />} />
           <Route path="/tv-shows" element={<TVShows />} />
-          <Route path="/movie/:tmdbId" element={<MovieDetails />} />
-          <Route path="/tv/:tmdbId" element={<TvShowDetails />} />
+          <Route path="/games" element={<Games />} />
+
+          <Route path="/movie/:externalId" element={<MovieDetails />} />
+          <Route path="/tv/:externalId" element={<TvShowDetails />} />
+          <Route path="/game/:externalId" element={<GameDetails />} />
+          
           <Route path="/profile" element={<UserProfile />} />
         </Route>
       </Routes>

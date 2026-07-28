@@ -14,7 +14,7 @@ const mediaSections = [
   {
     label: "Games",
     path: "/games",
-    enabled: false,
+    enabled: true,
   },
   {
     label: "Books",

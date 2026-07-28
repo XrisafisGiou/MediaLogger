@@ -9,7 +9,7 @@ import MediaDetailsHero from "./MediaDetailsHero";
 import MediaScreenshotCard from "./MediaScreenshotCard";
 
 export default function MediaDetailsPage({ config }) {
-  const { tmdbId } = useParams();
+  const { externalId } = useParams();
   const navigate = useNavigate();
   const [media, setMedia] = useState(null);
   const [libraryEntry, setLibraryEntry] = useState(null);
@@ -17,6 +17,7 @@ export default function MediaDetailsPage({ config }) {
   const [credits, setCredits] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const getImageUrl = config.getImageUrl ?? getTmdbImageUrl;
 
   useEffect(() => {
     let isCurrent = true;
@@ -27,11 +28,11 @@ export default function MediaDetailsPage({ config }) {
         setError("");
 
         const [mediaData, statusData, images, creditsData] = await Promise.all([
-          config.api.getDetails(tmdbId),
-          config.api.getStatus(tmdbId),
-          config.api.getImages(tmdbId),
+          config.api.getDetails(externalId),
+          config.api.getStatus(externalId),
+          config.api.getImages(externalId),
           config.api.getCredits
-            ? config.api.getCredits(tmdbId)
+            ? config.api.getCredits(externalId)
             : Promise.resolve(null),
         ]);
 
@@ -53,7 +54,7 @@ export default function MediaDetailsPage({ config }) {
     return () => {
       isCurrent = false;
     };
-  }, [config, tmdbId]);
+  }, [config, externalId]);
 
   async function toggleStatus(newStatus) {
     if (libraryEntry?.status === newStatus) {
@@ -67,7 +68,7 @@ export default function MediaDetailsPage({ config }) {
       await config.api.add(config.createEntry(media, newStatus));
     }
 
-    setLibraryEntry(await config.api.getStatus(tmdbId));
+    setLibraryEntry(await config.api.getStatus(externalId));
   }
 
   if (loading) {
@@ -93,7 +94,7 @@ export default function MediaDetailsPage({ config }) {
 
   return (
     <PageShell
-      backgroundImage={getTmdbImageUrl(media.backdrop_path, "original")}
+      backgroundImage={getImageUrl(media.backdrop_path, "original")}
       contentClassName="mx-auto max-w-6xl p-6"
     >
       <BackButton onClick={() => navigate(-1)} className="mb-6" />
@@ -106,6 +107,7 @@ export default function MediaDetailsPage({ config }) {
         status={libraryEntry?.status}
         statusUi={config.statusUi}
         onToggleStatus={toggleStatus}
+        getImageUrl={getImageUrl}
       />
 
       <Carousel
@@ -113,7 +115,7 @@ export default function MediaDetailsPage({ config }) {
         items={screenshots}
         getKey={(screenshot, index) => screenshot.file_path || index}
         renderItem={(screenshot) => (
-          <MediaScreenshotCard screenshot={screenshot} title={title} />
+          <MediaScreenshotCard screenshot={screenshot} title={title} getImageUrl={getImageUrl}/>
         )}
         slidesPerView={{ base: 1, md: 3 }}
         className="mt-10"

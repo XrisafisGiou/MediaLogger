@@ -46,6 +46,7 @@ export default function MediaCollectionPage({ config }) {
     detailsRoute,
     api,
     statusUi = defaultStatusUi,
+    getImageUrl = getTmdbImageUrl,
   } = config;
   const {
     getAll,
@@ -296,7 +297,7 @@ export default function MediaCollectionPage({ config }) {
           renderItem={(media) => (
             <ItemCard
               title={media[titleField]}
-              imageSrc={getTmdbImageUrl(media.poster_path)}
+              imageSrc={getImageUrl(media.poster_path)}
               onOpen={() => navigate(`/${detailsRoute}/${media.id}`)}
               actions={getSearchActions(media)}
             />
@@ -322,7 +323,7 @@ export default function MediaCollectionPage({ config }) {
             <ItemCard
               key={entry.id}
               title={media[titleField]}
-              imageSrc={getTmdbImageUrl(media.posterPath)}
+              imageSrc={getImageUrl(media.posterPath)}
               onOpen={() =>
                 navigate(`/${detailsRoute}/${media[externalIdField]}`)
               }

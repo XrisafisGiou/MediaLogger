@@ -28,39 +28,79 @@ api.interceptors.response.use(
 
 const responseData = (response) => response.data;
 
-function createMediaApi(collectionPath, tmdbResource) {
+function createMediaApi(
+  collectionPath,
+  providerPath,
+  providerResource,
+) {
   return {
-    getAll: () => api.get(`/${collectionPath}`).then(responseData),
-    add: (data) => api.post(`/${collectionPath}`, data).then(responseData),
-    update: (id, data) =>
-      api.patch(`/${collectionPath}/${id}`, data).then(responseData),
-    remove: (id) =>
-      api.delete(`/${collectionPath}/${id}`).then(responseData),
-    getStatus: (tmdbId) =>
+    getAll: () =>
       api
-        .get(`/${collectionPath}/status/${tmdbId}`)
+        .get(`/${collectionPath}`)
         .then(responseData),
+
+    add: (data) =>
+      api
+        .post(`/${collectionPath}`, data)
+        .then(responseData),
+
+    update: (id, data) =>
+      api
+        .patch(`/${collectionPath}/${id}`, data)
+        .then(responseData),
+
+    remove: (id) =>
+      api
+        .delete(`/${collectionPath}/${id}`)
+        .then(responseData),
+
+    getStatus: (externalId) =>
+      api
+        .get(
+          `/${collectionPath}/status/${externalId}`,
+        )
+        .then(responseData),
+
     search: (query) =>
       api
-        .get(`/tmdb/search/${tmdbResource}`, {
-          params: { query },
-        })
+        .get(
+          `/${providerPath}/search/${providerResource}`,
+          {
+            params: { query },
+          },
+        )
         .then(responseData),
-    getDetails: (tmdbId) =>
-      api.get(`/tmdb/${tmdbResource}/${tmdbId}`).then(responseData),
-    getImages: (tmdbId) =>
+
+    getDetails: (externalId) =>
       api
-        .get(`/tmdb/${tmdbResource}/${tmdbId}/images`)
+        .get(
+          `/${providerPath}/${providerResource}/${externalId}`,
+        )
         .then(responseData),
-    getCredits: (tmdbId) =>
+
+    getImages: (externalId) =>
       api
-        .get(`/tmdb/${tmdbResource}/${tmdbId}/credits`)
+        .get(
+          `/${providerPath}/${providerResource}/${externalId}/images`,
+        )
+        .then(responseData),
+
+    getCredits: (externalId) =>
+      api
+        .get(
+          `/${providerPath}/${providerResource}/${externalId}/credits`,
+        )
         .then(responseData),
   };
 }
 
-const movieApi = createMediaApi("movies", "movie");
-const tvShowApi = createMediaApi("tv-shows", "tv");
+const movieApi = createMediaApi("movies", "tmdb", "movie");
+const tvShowApi = createMediaApi("tv-shows", "tmdb", "tv");
+const gameApi = createMediaApi(
+  "games",
+  "igdb",
+  "game",
+);
 
 export const login = (username, password) =>
   api.post("/users/login", { username, password }).then(responseData);
@@ -93,3 +133,12 @@ export const searchTvShows = tvShowApi.search;
 export const getTvShowDetails = tvShowApi.getDetails;
 export const getTvShowImages = tvShowApi.getImages;
 export const getTvShowCredits = tvShowApi.getCredits;
+
+export const getGames = gameApi.getAll;
+export const addGame = gameApi.add;
+export const updateGame = gameApi.update;
+export const deleteGame = gameApi.remove;
+export const getGameStatus = gameApi.getStatus;
+export const searchGames = gameApi.search;
+export const getGameDetails = gameApi.getDetails;
+export const getGameImages = gameApi.getImages;

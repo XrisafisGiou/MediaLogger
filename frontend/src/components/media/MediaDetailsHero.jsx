@@ -18,6 +18,7 @@ export default function MediaDetailsHero({
   status,
   statusUi = defaultStatusUi,
   onToggleStatus,
+  getImageUrl = getTmdbImageUrl,
 }) {
   const labels = { ...defaultStatusUi, ...statusUi };
   const statusActions = [
@@ -51,7 +52,7 @@ export default function MediaDetailsHero({
   return (
     <div className="flex flex-col gap-8 md:flex-row">
       <div className="w-72 shrink-0 overflow-hidden rounded-xl shadow-2xl">
-        <ItemArtwork src={getTmdbImageUrl(posterPath)} alt={title} />
+        <ItemArtwork src={getImageUrl(posterPath)} alt={title} />
       </div>
 
       <div className="flex flex-col gap-4">
