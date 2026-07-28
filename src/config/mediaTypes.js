@@ -51,6 +51,26 @@ const mediaTypes = {
       errorPluralLabel: "TV shows",
     },
   },
+  game: {
+  key: "game",
+  label: "Game",
+  notFoundMessage: "Game not found",
+  validation: {
+    requiredFields: ["igdbGameId", "name", "status"],
+    requiredMessage: "igdbGameId, name and status are required",
+    validateStatus: true,
+  },
+  prisma: {
+    mediaModel: "game",
+    userMediaModel: "userGame",
+    relationField: "game",
+    foreignKeyField: "gameId",
+    externalIdField: "igdbGameId",
+    displayNameField: "name",
+    compositeKey: "userId_gameId",
+    includeOnWrite: true,
+  },
+},
 };
 
 export const MEDIA_TYPES = Object.freeze(

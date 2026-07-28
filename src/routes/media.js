@@ -7,7 +7,7 @@ export function createMediaRouter(controller) {
   router.use(authMiddleware);
   router.post("/", controller.add);
   router.get("/", controller.getAll);
-  router.get("/status/:tmdbId", controller.getStatus);
+  router.get("/status/:externalId", controller.getStatus);
   router.patch("/:id", controller.update);
   router.delete("/:id", controller.delete);
 

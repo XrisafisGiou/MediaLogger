@@ -19,6 +19,7 @@ model User {
 
   userMovies   UserMovie[]
   userTvShows  UserTvShow[]
+  userGames    UserGame[]
 }
 
 enum MediaStatus {
@@ -74,4 +75,29 @@ model UserTvShow {
   tvShow      TvShow @relation(fields: [tvShowId], references: [id])
 
   @@unique([userId, tvShowId])
+}
+
+model Game {
+  id         Int @id @default(autoincrement())
+  igdbGameId Int @unique
+
+  name       String
+  posterPath String?
+
+  userGames  UserGame[]
+}
+
+model UserGame {
+  id         Int @id @default(autoincrement())
+
+  userId     Int
+  gameId     Int
+
+  status     MediaStatus
+  isFavorite Boolean @default(false)
+
+  user       User @relation(fields: [userId], references: [id])
+  game       Game @relation(fields: [gameId], references: [id])
+
+  @@unique([userId, gameId])
 }

@@ -30,7 +30,7 @@ export function createMediaController(mediaService) {
     async check(req, res) {
       const media = await mediaService.check(
         req.user.userId,
-        req.params.tmdbId,
+        req.params.externalId,
       );
       return res.json(media);
     },
@@ -38,7 +38,7 @@ export function createMediaController(mediaService) {
     async getStatus(req, res) {
       const status = await mediaService.getStatus(
         req.user.userId,
-        req.params.tmdbId,
+        req.params.externalId,
       );
       return res.json(status);
     },
