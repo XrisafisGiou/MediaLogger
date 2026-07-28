@@ -2,7 +2,12 @@ import { useEffect, useState } from "react";
 import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../context/useAuth";
-import { changePassword, getCurrentUser, getMovies } from "../services/api.js";
+import {
+  changePassword,
+  getCurrentUser,
+  getMovies,
+  getTvShows,
+} from "../services/api.js";
 import BackButton from "../components/common/BackButton";
 import StatGrid from "../components/common/StatGrid";
 import PageShell from "../components/layout/PageShell";
@@ -20,16 +25,18 @@ export default function UserProfile() {
 
   useEffect(() => {
     async function loadProfile() {
-      const [userData, movies] = await Promise.all([
+      const [userData, movies, tvShows] = await Promise.all([
         getCurrentUser(),
         getMovies(),
+        getTvShows(),
       ]);
+      const media = [...movies, ...tvShows];
 
       setUser(userData);
       setStats({
-        watched: movies.filter((movie) => movie.status === "watched").length,
-        watchlist: movies.filter((movie) => movie.status === "watchlist").length,
-        favorites: movies.filter((movie) => movie.isFavorite).length,
+        watched: media.filter((item) => item.status === "watched").length,
+        watchlist: media.filter((item) => item.status === "watchlist").length,
+        favorites: media.filter((item) => item.isFavorite).length,
       });
     }
 

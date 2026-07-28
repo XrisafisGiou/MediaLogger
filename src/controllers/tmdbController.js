@@ -1,24 +1,54 @@
 import tmdbService from "../services/tmdbService.js";
 
-export async function getMovieDetails(req, res) {
-  const movie = await tmdbService.getMovieDetails(req.params.id);
-  return res.json(movie);
+export function createTmdbMediaController(mediaType) {
+  return {
+    async getDetails(req, res) {
+      const media = await tmdbService.getDetails(
+        mediaType,
+        req.params.id,
+      );
+      return res.json(media);
+    },
+
+    async search(req, res) {
+      const media = await tmdbService.search(
+        mediaType,
+        req.query.query,
+      );
+      return res.json(media);
+    },
+
+    async getImages(req, res) {
+      const images = await tmdbService.getImages(
+        mediaType,
+        req.params.id,
+      );
+      return res.json(images);
+    },
+
+    async getCredits(req, res) {
+      const credits = await tmdbService.getCredits(
+        mediaType,
+        req.params.id,
+      );
+      return res.json(credits);
+    },
+  };
 }
 
+const movieController = createTmdbMediaController("movie");
+const tvShowController = createTmdbMediaController("tvShow");
 
-export async function searchMovies(req, res) {
-  const movies = await tmdbService.searchMovies(req.query.query);
-  return res.json(movies);
-}
+export const {
+  getDetails: getMovieDetails,
+  search: searchMovies,
+  getImages: getMovieImages,
+  getCredits: getMovieCredits,
+} = movieController;
 
-
-export async function getMovieImages(req, res) {
-  const images = await tmdbService.getMovieImages(req.params.id);
-  return res.json(images);
-}
-
-
-export async function getMovieCredits(req, res) {
-  const credits = await tmdbService.getMovieCredits(req.params.id);
-  return res.json(credits);
-}
+export const {
+  getDetails: getTvShowDetails,
+  search: searchTvShows,
+  getImages: getTvShowImages,
+  getCredits: getTvShowCredits,
+} = tvShowController;

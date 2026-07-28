@@ -1,11 +1,11 @@
 import ItemArtwork from "../common/ItemArtwork";
 import { getTmdbImageUrl } from "../../utils/tmdbImages";
 
-export default function ScreenshotCard({ screenshot, movieTitle }) {
+export default function MediaScreenshotCard({ screenshot, title }) {
   return (
     <ItemArtwork
       src={getTmdbImageUrl(screenshot.file_path, "w780")}
-      alt={`${movieTitle} screenshot`}
+      alt={`${title} screenshot`}
       aspect="landscape"
       className="aspect-video rounded-lg shadow-lg"
     />

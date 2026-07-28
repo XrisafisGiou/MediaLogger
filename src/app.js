@@ -5,6 +5,7 @@ import userRouter from "./routes/users.js";
 import movieRouter from "./routes/movies.js";
 import tmdbRouter from "./routes/tmdb.js";
 import { errorMiddleware } from "./middleware/errorMiddleware.js";
+import tvShowRouter from "./routes/tvShows.js";
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/users", userRouter);
 app.use("/api/movies", movieRouter);
+app.use("/api/tv-shows", tvShowRouter);
 app.use("/api/tmdb", tmdbRouter);
 
 app.use(errorMiddleware);

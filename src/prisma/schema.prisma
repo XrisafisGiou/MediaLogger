@@ -18,9 +18,10 @@ model User {
   passwordHash String
 
   userMovies   UserMovie[]
+  userTvShows  UserTvShow[]
 }
 
-enum MovieStatus {
+enum MediaStatus {
   watchlist
   watched
 }
@@ -31,7 +32,7 @@ model UserMovie {
   userId      Int
   movieId     Int
 
-  status      MovieStatus
+  status      MediaStatus
   isFavorite  Boolean @default(false)
 
   user         User  @relation(fields: [userId], references: [id])
@@ -48,4 +49,29 @@ model Movie {
   posterPath  String?
 
   userMovies  UserMovie[]
+}
+
+model TvShow {
+  id           Int    @id @default(autoincrement())
+  tmdbTvShowId Int    @unique
+
+  name         String
+  posterPath   String?
+
+  userTvShows  UserTvShow[]
+}
+
+model UserTvShow {
+  id          Int @id @default(autoincrement())
+
+  userId      Int
+  tvShowId    Int
+
+  status      MediaStatus
+  isFavorite  Boolean @default(false)
+
+  user        User   @relation(fields: [userId], references: [id])
+  tvShow      TvShow @relation(fields: [tvShowId], references: [id])
+
+  @@unique([userId, tvShowId])
 }

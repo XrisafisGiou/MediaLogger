@@ -2,34 +2,30 @@ import { MEDIA_TYPES } from "../config/mediaTypes.js";
 import prisma from "../lib/prisma.js";
 import { MediaService } from "./mediaService.js";
 
-export class MovieService extends MediaService {
+export class TvShowService extends MediaService {
   constructor(prismaClient = prisma) {
-    super(MEDIA_TYPES.movie, prismaClient);
+    super(MEDIA_TYPES.tvShow, prismaClient);
   }
 
-  addMovie(...args) {
+  addTvShow(...args) {
     return this.add(...args);
   }
 
-  getMovies(...args) {
+  getTvShows(...args) {
     return this.getAll(...args);
   }
 
-  updateMovie(...args) {
+  updateTvShow(...args) {
     return this.update(...args);
   }
 
-  deleteMovie(...args) {
+  deleteTvShow(...args) {
     return this.delete(...args);
   }
 
-  checkMovie(...args) {
-    return this.check(...args);
-  }
-
-  getMovieStatus(...args) {
+  getTvShowStatus(...args) {
     return this.getStatus(...args);
   }
 }
 
-export default new MovieService();
+export default new TvShowService();

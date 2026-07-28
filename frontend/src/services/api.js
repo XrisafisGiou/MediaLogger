@@ -15,57 +15,81 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-  (res) => res,
-  (err) => {
-    if (err.response?.status === 401) {
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
       localStorage.removeItem("token");
       window.location.href = "/";
     }
-    return Promise.reject(err);
-  }
+
+    return Promise.reject(error);
+  },
 );
 
+const responseData = (response) => response.data;
+
+function createMediaApi(collectionPath, tmdbResource) {
+  return {
+    getAll: () => api.get(`/${collectionPath}`).then(responseData),
+    add: (data) => api.post(`/${collectionPath}`, data).then(responseData),
+    update: (id, data) =>
+      api.patch(`/${collectionPath}/${id}`, data).then(responseData),
+    remove: (id) =>
+      api.delete(`/${collectionPath}/${id}`).then(responseData),
+    getStatus: (tmdbId) =>
+      api
+        .get(`/${collectionPath}/status/${tmdbId}`)
+        .then(responseData),
+    search: (query) =>
+      api
+        .get(`/tmdb/search/${tmdbResource}`, {
+          params: { query },
+        })
+        .then(responseData),
+    getDetails: (tmdbId) =>
+      api.get(`/tmdb/${tmdbResource}/${tmdbId}`).then(responseData),
+    getImages: (tmdbId) =>
+      api
+        .get(`/tmdb/${tmdbResource}/${tmdbId}/images`)
+        .then(responseData),
+    getCredits: (tmdbId) =>
+      api
+        .get(`/tmdb/${tmdbResource}/${tmdbId}/credits`)
+        .then(responseData),
+  };
+}
+
+const movieApi = createMediaApi("movies", "movie");
+const tvShowApi = createMediaApi("tv-shows", "tv");
+
 export const login = (username, password) =>
-  api.post("/users/login", { username, password }).then((r) => r.data);
+  api.post("/users/login", { username, password }).then(responseData);
 
 export const register = (username, password) =>
-  api.post("/users/register", { username, password }).then((r) => r.data);
-
-export const getMovies = () =>
-  api.get("/movies").then((r) => r.data);
-
-export const addMovie = (data) =>
-  api.post("/movies", data).then((r) => r.data);
-
-export const updateMovie = (id, data) =>
-  api.patch(`/movies/${id}`, data).then((r) => r.data);
-
-export const deleteMovie = (id) =>
-  api.delete(`/movies/${id}`).then((r) => r.data);
-
-export const searchMovies = (query) =>
-  api.get("/tmdb/search/movie", {
-    params: { query },
-  }).then((r) => r.data);
-
-export const getMovieDetails = (id) =>
-  api.get(`/tmdb/movie/${id}`).then((r) => r.data);
-
-export const getMovieStatus = (tmdbId) =>
-  api.get(`/movies/status/${tmdbId}`)
-     .then((r) => r.data);
+  api.post("/users/register", { username, password }).then(responseData);
 
 export const getCurrentUser = () =>
-  api.get("/users/me").then((r) => r.data);
+  api.get("/users/me").then(responseData);
 
 export const changePassword = (data) =>
-  api.patch("/users/password", data)
-     .then((r) => r.data);
+  api.patch("/users/password", data).then(responseData);
 
-export const getMovieImages = (tmdbId) =>
-  api.get(`/tmdb/movie/${tmdbId}/images`)
-     .then((r) => r.data);
+export const getMovies = movieApi.getAll;
+export const addMovie = movieApi.add;
+export const updateMovie = movieApi.update;
+export const deleteMovie = movieApi.remove;
+export const getMovieStatus = movieApi.getStatus;
+export const searchMovies = movieApi.search;
+export const getMovieDetails = movieApi.getDetails;
+export const getMovieImages = movieApi.getImages;
+export const getMovieCredits = movieApi.getCredits;
 
-export const getMovieCredits = (tmdbId) =>
-  api.get(`/tmdb/movie/${tmdbId}/credits`)
-     .then((r) => r.data);
+export const getTvShows = tvShowApi.getAll;
+export const addTvShow = tvShowApi.add;
+export const updateTvShow = tvShowApi.update;
+export const deleteTvShow = tvShowApi.remove;
+export const getTvShowStatus = tvShowApi.getStatus;
+export const searchTvShows = tvShowApi.search;
+export const getTvShowDetails = tvShowApi.getDetails;
+export const getTvShowImages = tvShowApi.getImages;
+export const getTvShowCredits = tvShowApi.getCredits;

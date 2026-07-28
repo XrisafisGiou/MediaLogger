@@ -1,4 +1,5 @@
 import tmdbClient from "../clients/tmdbClient.js";
+import { getMediaType } from "../config/mediaTypes.js";
 import { ExternalServiceError } from "../errors/serviceErrors.js";
 
 export class TmdbService {
@@ -7,30 +8,78 @@ export class TmdbService {
   }
 
   async getMovieDetails(id) {
-    return this.get(`/movie/${id}`, undefined, "Failed to fetch movie details");
+    return this.getDetails("movie", id);
   }
 
   async searchMovies(query) {
-    return this.get(
-      "/search/movie",
-      { query },
-      "Failed to search movies",
-    );
+    return this.search("movie", query);
   }
 
   async getMovieImages(id) {
-    return this.get(
-      `/movie/${id}/images`,
-      undefined,
-      "Failed to fetch movie images",
-    );
+    return this.getImages("movie", id);
   }
 
   async getMovieCredits(id) {
+    return this.getCredits("movie", id);
+  }
+
+  async getTvShowDetails(id) {
+    return this.getDetails("tvShow", id);
+  }
+
+  async searchTvShows(query) {
+    return this.search("tvShow", query);
+  }
+
+  async getTvShowImages(id) {
+    return this.getImages("tvShow", id);
+  }
+
+  async getTvShowCredits(id) {
+    return this.getCredits("tvShow", id);
+  }
+
+  getDetails(mediaType, id) {
+    const { resource, errorLabel } = getMediaType(mediaType).tmdb;
+
     return this.get(
-      `/movie/${id}/credits`,
+      `/${resource}/${id}`,
       undefined,
-      "Failed to fetch movie credits",
+      `Failed to fetch ${errorLabel} details`,
+    );
+  }
+
+  search(mediaType, query) {
+    const { resource, errorPluralLabel } = getMediaType(mediaType).tmdb;
+
+    return this.get(
+      `/search/${resource}`,
+      { query },
+      `Failed to search ${errorPluralLabel}`,
+    );
+  }
+
+  getImages(mediaType, id) {
+    const { resource, errorLabel } = getMediaType(mediaType).tmdb;
+
+    return this.get(
+      `/${resource}/${id}/images`,
+      undefined,
+      `Failed to fetch ${errorLabel} images`,
+    );
+  }
+
+  getCredits(mediaType, id) {
+    const {
+      resource,
+      creditsResource,
+      errorLabel,
+    } = getMediaType(mediaType).tmdb;
+
+    return this.get(
+      `/${resource}/${id}/${creditsResource}`,
+      undefined,
+      `Failed to fetch ${errorLabel} credits`,
     );
   }
 

@@ -8,6 +8,7 @@ import Movies from "./pages/Movies.jsx";
 import MovieDetails from "./pages/MovieDetails.jsx";
 import UserProfile from "./pages/UserProfile.jsx";
 import TVShows from "./pages/TVShows.jsx";
+import TvShowDetails from "./pages/TvShowDetails.jsx";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="/movies" element={<Movies />} />
           <Route path="/tv-shows" element={<TVShows />} />
           <Route path="/movie/:tmdbId" element={<MovieDetails />} />
+          <Route path="/tv/:tmdbId" element={<TvShowDetails />} />
           <Route path="/profile" element={<UserProfile />} />
         </Route>
       </Routes>

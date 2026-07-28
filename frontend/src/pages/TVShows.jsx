@@ -1,14 +1,31 @@
-import PageHeader from "../components/common/PageHeader";
-import PageShell from "../components/layout/PageShell";
+import MediaCollectionPage from "../components/media/MediaCollectionPage";
+import {
+  addTvShow,
+  deleteTvShow,
+  getTvShows,
+  searchTvShows,
+  updateTvShow,
+} from "../services/api.js";
 
-export default function TVShows() {
-  return (
-    <PageShell contentClassName="p-6">
-      <PageHeader title="My TV Shows" className="mb-6" />
+const tvShowCollection = {
+  heading: "My TV Shows",
+  singularName: "TV Show",
+  pluralName: "TV shows",
+  searchHeading: "Search TV Shows",
+  searchPlaceholder: "Search TV show...",
+  relationField: "tvShow",
+  externalIdField: "tmdbTvShowId",
+  titleField: "name",
+  detailsRoute: "tv",
+  api: {
+    getAll: getTvShows,
+    add: addTvShow,
+    update: updateTvShow,
+    remove: deleteTvShow,
+    search: searchTvShows,
+  },
+};
 
-      <p className="text-white/60">
-        TV shows support is coming soon.
-      </p>
-    </PageShell>
-  );
+export default function TvShows() {
+  return <MediaCollectionPage config={tvShowCollection} />;
 }
