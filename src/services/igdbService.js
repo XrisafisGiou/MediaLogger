@@ -5,6 +5,16 @@ import {
   ValidationError,
 } from "../errors/serviceErrors.js";
 
+const ALLOWED_GAME_TYPES = new Set([
+  "Main Game",
+  "Standalone Expansion",
+  "Remake",
+  "Remaster",
+  "Expanded Game",
+  "Expansion",
+]);
+let allowedGameTypeIds = null;
+
 function escapeSearchQuery(value) {
   return String(value)
     .replaceAll("\\", "\\\\")
@@ -65,28 +75,44 @@ export class IgdbService {
   }
 
   async searchGames(query) {
-    const trimmedQuery = query?.trim();
+  const trimmedQuery = query?.trim();
 
-    if (!trimmedQuery) {
-      return {
-        results: [],
-      };
-    }
-
-    const games = await this.requestGames(
-      `
-        search "${escapeSearchQuery(trimmedQuery)}";
-        fields id, name, cover.image_id;
-        where version_parent = null;
-        limit 20;
-      `,
-      "Failed to search games",
-    );
-
+  if (!trimmedQuery) {
     return {
-      results: games.map(normalizeSearchResult),
+      results: [],
     };
   }
+
+  const gameTypeIds =
+    await this.getAllowedGameTypeIds();
+
+  const games = await this.requestGames(
+    `
+      search "${escapeSearchQuery(trimmedQuery)}";
+
+      fields
+        id,
+        name,
+        cover.image_id,
+        game_type,
+        game_type.type,
+        version_parent,
+        parent_game;
+
+      where
+        game_type = (${gameTypeIds.join(",")})
+        & version_parent = null
+        & cover != null;
+
+      limit 20;
+    `,
+    "Failed to search games",
+  );
+
+  return {
+    results: games.map(normalizeSearchResult),
+  };
+}
 
   async getGameDetails(id) {
     const gameId = parseGameId(id);
@@ -146,20 +172,69 @@ export class IgdbService {
     };
   }
 
-  async requestGames(query, errorMessage) {
-    try {
-      const response = await this.client.post(
-        "/games",
-        query,
-      );
+  requestGames(query, errorMessage) {
+  return this.request(
+    "/games",
+    query,
+    errorMessage,
+  );
+}
 
-      return response.data;
-    } catch (error) {
-      throw new ExternalServiceError(errorMessage, {
-        cause: error,
-      });
-    }
+  async request(endpoint, query, errorMessage) {
+  try {
+    const response = await this.client.post(
+      endpoint,
+      query,
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(
+      "IGDB error:",
+      error.response?.status,
+      error.response?.data,
+    );
+
+    throw new ExternalServiceError(errorMessage, {
+      cause: error,
+    });
   }
+}
+async getAllowedGameTypeIds() {
+  if (allowedGameTypeIds) {
+    return allowedGameTypeIds;
+  }
+
+  const gameTypes = await this.request(
+    "/game_types",
+    `
+      fields id, type;
+      limit 50;
+    `,
+    "Failed to fetch IGDB game types",
+  );
+
+  allowedGameTypeIds = gameTypes
+    .filter((gameType) =>
+      ALLOWED_GAME_TYPES.has(gameType.type),
+    )
+    .map((gameType) => gameType.id);
+
+  if (!allowedGameTypeIds.length) {
+    throw new ExternalServiceError(
+      "No supported IGDB game types were found",
+    );
+  }
+
+  console.log(
+    "Allowed IGDB game types:",
+    gameTypes.filter((gameType) =>
+      allowedGameTypeIds.includes(gameType.id),
+    ),
+  );
+
+  return allowedGameTypeIds;
+}
 }
 
 export default new IgdbService();
