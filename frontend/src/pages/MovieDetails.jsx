@@ -9,12 +9,14 @@ import {
   updateMovie,
 } from "../services/api.js";
 import MediaDetailsPage from "../components/media/MediaDetailsPage";
+import { getTmdbImageUrl } from "../utils/tmdbImages.js";
 
 function formatRating(rating) {
   return Number.isFinite(rating) ? `${rating.toFixed(1)} / 10` : "N/A";
 }
 
 const movieDetailsConfig = {
+  getImageUrl: getTmdbImageUrl,
   labels: {
     loading: "Loading movie...",
     notFound: "Movie not found",

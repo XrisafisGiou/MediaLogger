@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getTmdbImageUrl } from "../../utils/tmdbImages";
 import BackButton from "../common/BackButton";
 import Carousel from "../common/Carousel";
 import PageShell from "../layout/PageShell";
@@ -17,7 +16,7 @@ export default function MediaDetailsPage({ config }) {
   const [credits, setCredits] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
-  const getImageUrl = config.getImageUrl ?? getTmdbImageUrl;
+  const { getImageUrl } = config;
 
   useEffect(() => {
     let isCurrent = true;

@@ -6,6 +6,7 @@ import {
   searchMovies,
   updateMovie,
 } from "../services/api.js";
+import { getTmdbImageUrl } from "../utils/tmdbImages.js";
 
 const movieCollection = {
   heading: "My Movies",
@@ -17,6 +18,7 @@ const movieCollection = {
   externalIdField: "tmdbMovieId",
   titleField: "title",
   detailsRoute: "movie",
+  getImageUrl: getTmdbImageUrl,
   api: {
     getAll: getMovies,
     add: addMovie,

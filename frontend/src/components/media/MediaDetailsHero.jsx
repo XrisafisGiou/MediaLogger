@@ -1,7 +1,6 @@
 import { Bookmark, Eye } from "lucide-react";
 import ActionButtonGroup from "../common/ActionButtonGroup";
 import ItemArtwork from "../common/ItemArtwork";
-import { getTmdbImageUrl } from "../../utils/tmdbImages";
 
 const defaultStatusUi = {
   markWatched: "Mark as Watched",
@@ -18,7 +17,7 @@ export default function MediaDetailsHero({
   status,
   statusUi = defaultStatusUi,
   onToggleStatus,
-  getImageUrl = getTmdbImageUrl,
+  getImageUrl,
 }) {
   const labels = { ...defaultStatusUi, ...statusUi };
   const statusActions = [

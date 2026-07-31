@@ -1,7 +1,6 @@
 import ItemArtwork from "../common/ItemArtwork";
-import { getTmdbImageUrl } from "../../utils/tmdbImages";
 
-export default function MediaScreenshotCard({ screenshot, title, getImageUrl = getTmdbImageUrl }) {
+export default function MediaScreenshotCard({ screenshot, title, getImageUrl }) {
   return (
     <ItemArtwork
       src={getImageUrl(screenshot.file_path, "w780")}

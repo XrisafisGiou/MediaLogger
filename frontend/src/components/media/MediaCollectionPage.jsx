@@ -9,7 +9,6 @@ import {
 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import useAuth from "../../context/useAuth";
-import { getTmdbImageUrl } from "../../utils/tmdbImages";
 import ConfirmModal from "../ConfirmModal";
 import CollectionToolbar from "../common/CollectionToolbar";
 import IconButton from "../common/IconButton";
@@ -46,7 +45,7 @@ export default function MediaCollectionPage({ config }) {
     detailsRoute,
     api,
     statusUi = defaultStatusUi,
-    getImageUrl = getTmdbImageUrl,
+    getImageUrl,
   } = config;
   const {
     getAll,

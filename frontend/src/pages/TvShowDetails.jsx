@@ -15,6 +15,7 @@ import {
   updateTvShow,
 } from "../services/api.js";
 import MediaDetailsPage from "../components/media/MediaDetailsPage";
+import { getTmdbImageUrl } from "../utils/tmdbImages.js";
 
 function formatRating(rating) {
   return Number.isFinite(rating) ? `${rating.toFixed(1)} / 10` : "N/A";
@@ -25,6 +26,7 @@ function getEpisodeRuntime(tvShow) {
 }
 
 const tvShowDetailsConfig = {
+  getImageUrl: getTmdbImageUrl,
   labels: {
     loading: "Loading TV show...",
     notFound: "TV show not found",

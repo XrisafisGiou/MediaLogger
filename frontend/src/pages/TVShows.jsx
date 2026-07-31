@@ -6,6 +6,7 @@ import {
   searchTvShows,
   updateTvShow,
 } from "../services/api.js";
+import { getTmdbImageUrl } from "../utils/tmdbImages.js";
 
 const tvShowCollection = {
   heading: "My TV Shows",
@@ -17,6 +18,7 @@ const tvShowCollection = {
   externalIdField: "tmdbTvShowId",
   titleField: "name",
   detailsRoute: "tv",
+  getImageUrl: getTmdbImageUrl,
   api: {
     getAll: getTvShows,
     add: addTvShow,
