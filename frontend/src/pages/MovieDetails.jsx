@@ -1,4 +1,4 @@
-import { CalendarDays, Clapperboard, Clock3, Star } from "lucide-react";
+import { CalendarDays, Clapperboard, Clock3, Star, Eye } from "lucide-react";
 import {
   addMovie,
   deleteMovie,
@@ -17,6 +17,7 @@ function formatRating(rating) {
 
 const movieDetailsConfig = {
   getImageUrl: getTmdbImageUrl,
+  watchedIcon: Eye,
   labels: {
     loading: "Loading movie...",
     notFound: "Movie not found",

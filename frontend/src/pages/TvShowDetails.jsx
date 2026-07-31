@@ -4,6 +4,7 @@ import {
   Clock3,
   Layers3,
   Star,
+  Eye,
 } from "lucide-react";
 import {
   addTvShow,
@@ -27,6 +28,7 @@ function getEpisodeRuntime(tvShow) {
 
 const tvShowDetailsConfig = {
   getImageUrl: getTmdbImageUrl,
+  watchedIcon: Eye,
   labels: {
     loading: "Loading TV show...",
     notFound: "TV show not found",

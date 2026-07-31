@@ -107,6 +107,7 @@ export default function MediaDetailsPage({ config }) {
         statusUi={config.statusUi}
         onToggleStatus={toggleStatus}
         getImageUrl={getImageUrl}
+        watchedIcon={config.watchedIcon}
       />
 
       <Carousel

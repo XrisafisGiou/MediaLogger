@@ -6,6 +6,7 @@ import {
   searchMovies,
   updateMovie,
 } from "../services/api.js";
+import { Eye } from "lucide-react";
 import { getTmdbImageUrl } from "../utils/tmdbImages.js";
 
 const movieCollection = {
@@ -19,6 +20,7 @@ const movieCollection = {
   titleField: "title",
   detailsRoute: "movie",
   getImageUrl: getTmdbImageUrl,
+  watchedIcon: Eye,
   api: {
     getAll: getMovies,
     add: addMovie,

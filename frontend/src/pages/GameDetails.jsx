@@ -56,6 +56,7 @@ const gameDetailsConfig = {
   },
 
   getImageUrl: getIgdbImageUrl,
+  watchedIcon: Gamepad2,
 
   api: {
     getDetails: getGameDetails,

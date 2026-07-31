@@ -1,4 +1,4 @@
-import { Bookmark, Eye } from "lucide-react";
+import { Bookmark } from "lucide-react";
 import ActionButtonGroup from "../common/ActionButtonGroup";
 import ItemArtwork from "../common/ItemArtwork";
 
@@ -18,12 +18,13 @@ export default function MediaDetailsHero({
   statusUi = defaultStatusUi,
   onToggleStatus,
   getImageUrl,
+  watchedIcon: WatchedIcon,
 }) {
   const labels = { ...defaultStatusUi, ...statusUi };
   const statusActions = [
     {
       key: "watched",
-      icon: Eye,
+      icon: WatchedIcon,
       label: status === "watched" ? labels.removeWatched : labels.markWatched,
       onClick: () => onToggleStatus("watched"),
       active: status === "watched",

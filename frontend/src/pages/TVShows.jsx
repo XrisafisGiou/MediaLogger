@@ -6,6 +6,7 @@ import {
   searchTvShows,
   updateTvShow,
 } from "../services/api.js";
+import { Eye } from "lucide-react";
 import { getTmdbImageUrl } from "../utils/tmdbImages.js";
 
 const tvShowCollection = {
@@ -19,6 +20,7 @@ const tvShowCollection = {
   titleField: "name",
   detailsRoute: "tv",
   getImageUrl: getTmdbImageUrl,
+  watchedIcon: Eye,
   api: {
     getAll: getTvShows,
     add: addTvShow,

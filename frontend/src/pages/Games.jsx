@@ -1,4 +1,5 @@
 import MediaCollectionPage from "../components/media/MediaCollectionPage";
+import { Gamepad2 } from "lucide-react";
 import {
   addGame,
   deleteGame,
@@ -21,6 +22,7 @@ const gameCollection = {
   detailsRoute: "game",
 
   getImageUrl: getIgdbImageUrl,
+  watchedIcon: Gamepad2,
 
   statusUi: {
     watched: "Played",

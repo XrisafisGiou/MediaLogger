@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   Bookmark,
-  Eye,
   Heart,
   LogOut,
   Trash2,
@@ -46,6 +45,7 @@ export default function MediaCollectionPage({ config }) {
     api,
     statusUi = defaultStatusUi,
     getImageUrl,
+    watchedIcon: WatchedIcon,
   } = config;
   const {
     getAll,
@@ -178,7 +178,7 @@ export default function MediaCollectionPage({ config }) {
     return [
       {
         key: "status",
-        icon: Eye,
+        icon: WatchedIcon,
         label:
           entry.status === "watched"
             ? labels.moveToWatchlist
@@ -225,7 +225,7 @@ export default function MediaCollectionPage({ config }) {
       return [
         {
           key: "status",
-          icon: isWatched ? Eye : Bookmark,
+          icon: isWatched ? WatchedIcon : Bookmark,
           label: isWatched ? labels.watched : labels.watchlist,
           disabled: true,
           className: isWatched ? "text-blue-400" : "text-purple-400",
@@ -237,7 +237,7 @@ export default function MediaCollectionPage({ config }) {
     return [
       {
         key: "watched",
-        icon: Eye,
+        icon: WatchedIcon,
         label: labels.markSearchResultWatched(title),
         onClick: () => addSearchResult(media, "watched"),
         className: "text-gray-400 hover:text-blue-300",
