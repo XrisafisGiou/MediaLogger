@@ -17,9 +17,10 @@ model User {
   username     String @unique
   passwordHash String
 
-  userMovies   UserMovie[]
-  userTvShows  UserTvShow[]
-  userGames    UserGame[]
+  userMovies  UserMovie[]
+  userTvShows UserTvShow[]
+  userGames   UserGame[]
+  userBooks   UserBook[]
 }
 
 enum MediaStatus {
@@ -28,51 +29,51 @@ enum MediaStatus {
 }
 
 model UserMovie {
-  id          Int @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
-  userId      Int
-  movieId     Int
+  userId  Int
+  movieId Int
 
-  status      MediaStatus
-  isFavorite  Boolean @default(false)
+  status     MediaStatus
+  isFavorite Boolean     @default(false)
 
-  user         User  @relation(fields: [userId], references: [id])
-  movie        Movie @relation(fields: [movieId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+  movie Movie @relation(fields: [movieId], references: [id])
 
   @@unique([userId, movieId])
 }
 
 model Movie {
-  id          Int    @id @default(autoincrement())
-  tmdbMovieId Int    @unique
+  id          Int @id @default(autoincrement())
+  tmdbMovieId Int @unique
 
-  title       String
-  posterPath  String?
+  title      String
+  posterPath String?
 
-  userMovies  UserMovie[]
+  userMovies UserMovie[]
 }
 
 model TvShow {
-  id           Int    @id @default(autoincrement())
-  tmdbTvShowId Int    @unique
+  id           Int @id @default(autoincrement())
+  tmdbTvShowId Int @unique
 
-  name         String
-  posterPath   String?
+  name       String
+  posterPath String?
 
-  userTvShows  UserTvShow[]
+  userTvShows UserTvShow[]
 }
 
 model UserTvShow {
-  id          Int @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
-  userId      Int
-  tvShowId    Int
+  userId   Int
+  tvShowId Int
 
-  status      MediaStatus
-  isFavorite  Boolean @default(false)
+  status     MediaStatus
+  isFavorite Boolean     @default(false)
 
-  user        User   @relation(fields: [userId], references: [id])
-  tvShow      TvShow @relation(fields: [tvShowId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+  tvShow TvShow @relation(fields: [tvShowId], references: [id])
 
   @@unique([userId, tvShowId])
 }
@@ -84,20 +85,45 @@ model Game {
   name       String
   posterPath String?
 
-  userGames  UserGame[]
+  userGames UserGame[]
 }
 
 model UserGame {
-  id         Int @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
-  userId     Int
-  gameId     Int
+  userId Int
+  gameId Int
 
   status     MediaStatus
-  isFavorite Boolean @default(false)
+  isFavorite Boolean     @default(false)
 
-  user       User @relation(fields: [userId], references: [id])
-  game       Game @relation(fields: [gameId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+  game Game @relation(fields: [gameId], references: [id])
 
   @@unique([userId, gameId])
+}
+
+model Book {
+  id            Int    @id @default(autoincrement())
+  googleBooksId String @unique
+
+  title      String
+  posterPath String?
+
+  userBooks UserBook[]
+}
+
+model UserBook {
+  id Int @id @default(autoincrement())
+
+  userId Int
+  bookId Int
+
+  status     MediaStatus
+  isFavorite Boolean     @default(false)
+
+  user User @relation(fields: [userId], references: [id])
+  book Book @relation(fields: [bookId], references: [id])
+
+  @@unique([userId, bookId])
 }

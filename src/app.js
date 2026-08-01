@@ -8,6 +8,8 @@ import { errorMiddleware } from "./middleware/errorMiddleware.js";
 import tvShowRouter from "./routes/tvShows.js";
 import gameRouter from "./routes/games.js";
 import igdbRouter from "./routes/igdb.js";
+import googleBooksRouter from "./routes/googleBooks.js";
+import bookRouter from "./routes/books.js";
 
 const app = express();
 
@@ -27,9 +29,11 @@ app.use("/api/users", userRouter);
 app.use("/api/movies", movieRouter);
 app.use("/api/tv-shows", tvShowRouter);
 app.use("/api/games", gameRouter);
+app.use("/api/books", bookRouter);
 
 app.use("/api/tmdb", tmdbRouter);
 app.use("/api/igdb", igdbRouter);
+app.use("/api/google-books", googleBooksRouter);
 
 app.use(errorMiddleware);
 

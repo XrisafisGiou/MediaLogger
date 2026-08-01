@@ -23,7 +23,6 @@ export class MediaService {
       relationField,
       includeOnWrite,
     } = this.config.prisma;
-    const externalId = Number(mediaData[externalIdField]);
     const displayName = mediaData[displayNameField];
     const { posterPath, status, isFavorite } = mediaData;
 
@@ -36,6 +35,8 @@ export class MediaService {
     if (requiredFields.some((field) => !mediaData[field])) {
       throw new ValidationError(requiredMessage);
     }
+
+    const externalId = this.normalizeExternalId(mediaData[externalIdField],);
 
     if (validateStatus) {
       this.validateStatus(status);
@@ -175,7 +176,7 @@ export class MediaService {
       where: {
         userId,
         [relationField]: {
-          [externalIdField]: Number(externalMediaId),
+          [externalIdField]: this.normalizeExternalId(externalMediaId),
         },
       },
     });
@@ -189,6 +190,39 @@ export class MediaService {
       status: userMedia.status,
       isFavorite: userMedia.isFavorite,
     };
+  }
+
+  normalizeExternalId(value) {
+    const {
+      externalIdType = "number",
+    } = this.config.prisma;
+
+    if (externalIdType === "string") {
+      const normalizedValue = String(
+        value ?? "",
+      ).trim();
+
+      if (!normalizedValue) {
+        throw new ValidationError(
+          `Invalid ${this.config.label} ID`,
+        );
+      }
+
+      return normalizedValue;
+    }
+
+    const normalizedValue = Number(value);
+
+    if (
+      !Number.isInteger(normalizedValue) ||
+      normalizedValue <= 0
+    ) {
+      throw new ValidationError(
+        `Invalid ${this.config.label} ID`,
+      );
+    }
+
+    return normalizedValue;
   }
 
   validateStatus(status) {
