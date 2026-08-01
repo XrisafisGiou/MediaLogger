@@ -19,7 +19,7 @@ const mediaSections = [
   {
     label: "Books",
     path: "/books",
-    enabled: false,
+    enabled: true,
   },
 ];
 

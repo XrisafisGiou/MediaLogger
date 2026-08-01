@@ -54,6 +54,16 @@ export class MediaService {
           posterPath,
         },
       });
+    } else if (posterPath) {
+      media = await this.prisma[mediaModel].update({
+        where: {
+          id: media.id,
+        },
+        data: {
+          [displayNameField]: displayName,
+          posterPath,
+        },
+      });
     }
 
     return this.prisma[userMediaModel].upsert({

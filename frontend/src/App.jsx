@@ -11,6 +11,8 @@ import TVShows from "./pages/TVShows.jsx";
 import TvShowDetails from "./pages/TvShowDetails.jsx";
 import Games from "./pages/Games.jsx";
 import GameDetails from "./pages/GameDetails.jsx";
+import Books from "./pages/Books.jsx";
+import BookDetails from "./pages/BookDetails.jsx";
 
 function App() {
   return (
@@ -29,10 +31,12 @@ function App() {
           <Route path="/movies" element={<Movies />} />
           <Route path="/tv-shows" element={<TVShows />} />
           <Route path="/games" element={<Games />} />
+          <Route path="/books" element={<Books />} />
 
           <Route path="/movie/:externalId" element={<MovieDetails />} />
           <Route path="/tv/:externalId" element={<TvShowDetails />} />
           <Route path="/game/:externalId" element={<GameDetails />} />
+          <Route path="/book/:externalId" element={<BookDetails />} />
           
           <Route path="/profile" element={<UserProfile />} />
         </Route>

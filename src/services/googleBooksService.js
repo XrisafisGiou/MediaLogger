@@ -10,7 +10,10 @@ function normalizeImageUrl(url) {
     return null;
   }
 
-  return url.replace(/^http:\/\//i, "https://");
+  return String(url).replace(
+    /^http:\/\//i,
+    "https://",
+  );
 }
 
 function getBestCover(imageLinks = {}) {
@@ -48,72 +51,169 @@ function getReleaseYear(publishedDate) {
     return null;
   }
 
-  const match = String(publishedDate).match(/\d{4}/);
+  const match = String(
+    publishedDate,
+  ).match(/\d{4}/);
 
   return match?.[0] ?? null;
 }
 
-function normalizeAuthors(authors) {
-  return Array.isArray(authors)
-    ? authors.filter(Boolean)
-    : [];
-}
-
-function normalizeCategories(categories) {
-  return Array.isArray(categories)
-    ? categories.filter(Boolean)
+function normalizeStringArray(values) {
+  return Array.isArray(values)
+    ? values.filter(Boolean)
     : [];
 }
 
 function normalizeSearchResult(volume) {
-  const volumeInfo = volume.volumeInfo || {};
+  const volumeInfo =
+    volume.volumeInfo || {};
 
   return {
     id: volume.id,
-    title: volumeInfo.title || "Untitled",
-    authors: normalizeAuthors(volumeInfo.authors),
-    publishedDate: volumeInfo.publishedDate || null,
+
+    title:
+      volumeInfo.title || "Untitled",
+
+    authors: normalizeStringArray(
+      volumeInfo.authors,
+    ),
+
+    publishedDate:
+      volumeInfo.publishedDate || null,
+
     releaseYear: getReleaseYear(
       volumeInfo.publishedDate,
     ),
-    poster_path: getBestCover(volumeInfo.imageLinks),
+
+    poster_path: getBestCover(
+      volumeInfo.imageLinks,
+    ),
   };
 }
 
+function normalizeSearchText(value) {
+  return String(value ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ");
+}
+
+function isUsefulSearchResult(volume) {
+  const volumeInfo = volume.volumeInfo;
+
+  if (!volume.id || !volumeInfo) {
+    return false;
+  }
+
+  const title = volumeInfo.title?.trim();
+
+  const authors = normalizeStringArray(
+    volumeInfo.authors,
+  );
+
+  const cover = getBestCover(
+    volumeInfo.imageLinks,
+  );
+
+  return Boolean(
+    title &&
+      authors.length > 0 &&
+      cover,
+  );
+}
+
+function removeDuplicateVolumes(volumes) {
+  const seenBooks = new Set();
+
+  return volumes.filter((volume) => {
+    const volumeInfo =
+      volume.volumeInfo || {};
+
+    const normalizedTitle =
+      normalizeSearchText(
+        volumeInfo.title,
+      );
+
+    const normalizedAuthors =
+      normalizeStringArray(
+        volumeInfo.authors,
+      )
+        .map(normalizeSearchText)
+        .sort()
+        .join("|");
+
+    const bookKey =
+      `${normalizedTitle}|${normalizedAuthors}`;
+
+    if (seenBooks.has(bookKey)) {
+      return false;
+    }
+
+    seenBooks.add(bookKey);
+
+    return true;
+  });
+}
+
+function cleanSearchResults(volumes) {
+  const usefulVolumes = volumes.filter(
+    isUsefulSearchResult,
+  );
+
+  return removeDuplicateVolumes(
+    usefulVolumes,
+  );
+}
+
 function normalizeBookDetails(volume) {
-  const volumeInfo = volume.volumeInfo || {};
-  const cover = getBestCover(volumeInfo.imageLinks);
+  const volumeInfo =
+    volume.volumeInfo || {};
+
+  const cover = getBestCover(
+    volumeInfo.imageLinks,
+  );
 
   return {
     id: volume.id,
 
-    title: volumeInfo.title || "Untitled",
-    subtitle: volumeInfo.subtitle || "",
+    title:
+      volumeInfo.title || "Untitled",
 
-    authors: normalizeAuthors(volumeInfo.authors),
+    subtitle:
+      volumeInfo.subtitle || "",
 
-    publishedDate: volumeInfo.publishedDate || null,
+    authors: normalizeStringArray(
+      volumeInfo.authors,
+    ),
+
+    publishedDate:
+      volumeInfo.publishedDate || null,
+
     releaseYear: getReleaseYear(
       volumeInfo.publishedDate,
     ),
 
-    publisher: volumeInfo.publisher || "",
+    publisher:
+      volumeInfo.publisher || "",
+
     overview: cleanDescription(
       volumeInfo.description,
     ),
 
-    categories: normalizeCategories(
+    categories: normalizeStringArray(
       volumeInfo.categories,
     ),
 
-    pageCount: Number.isInteger(volumeInfo.pageCount)
+    pageCount: Number.isInteger(
+      volumeInfo.pageCount,
+    )
       ? volumeInfo.pageCount
       : null,
 
-    language: volumeInfo.language || null,
+    language:
+      volumeInfo.language || null,
 
     poster_path: cover,
-
     backdrop_path: cover,
   };
 }
@@ -124,7 +224,9 @@ export class GoogleBooksService {
   }
 
   async searchBooks(query) {
-    const trimmedQuery = query?.trim();
+    const trimmedQuery = String(
+      query ?? "",
+    ).trim();
 
     if (!trimmedQuery) {
       return {
@@ -133,19 +235,21 @@ export class GoogleBooksService {
     }
 
     try {
-      const response = await this.client.get(
-        "/volumes",
-        {
-          params: {
-            q: trimmedQuery,
-            printType: "books",
-            orderBy: "relevance",
-            maxResults: 20,
+      const response =
+        await this.client.get(
+          "/volumes",
+          {
+            params: {
+              q: trimmedQuery,
+              printType: "books",
+              orderBy: "relevance",
+              maxResults: 20,
+            },
           },
-        },
-      );
+        );
 
-      const volumes = response.data.items || [];
+      const volumes =
+        response.data.items || [];
 
       return {
         results: volumes
@@ -173,7 +277,9 @@ export class GoogleBooksService {
   }
 
   async getBookDetails(id) {
-    const volumeId = String(id || "").trim();
+    const volumeId = String(
+      id ?? "",
+    ).trim();
 
     if (!volumeId) {
       throw new ValidationError(
@@ -182,13 +288,20 @@ export class GoogleBooksService {
     }
 
     try {
-      const response = await this.client.get(
-        `/volumes/${encodeURIComponent(volumeId)}`,
-      );
+      const response =
+        await this.client.get(
+          `/volumes/${encodeURIComponent(
+            volumeId,
+          )}`,
+        );
 
-      return normalizeBookDetails(response.data);
+      return normalizeBookDetails(
+        response.data,
+      );
     } catch (error) {
-      if (error.response?.status === 404) {
+      if (
+        error.response?.status === 404
+      ) {
         throw new NotFoundError(
           "Book not found",
           {

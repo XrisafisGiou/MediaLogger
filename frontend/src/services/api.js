@@ -97,6 +97,7 @@ function createMediaApi(
 const movieApi = createMediaApi("movies", "tmdb", "movie");
 const tvShowApi = createMediaApi("tv-shows", "tmdb", "tv");
 const gameApi = createMediaApi("games", "igdb", "game");
+const bookApi = createMediaApi("books", "google-books", "book",);
 
 export const login = (username, password) =>
   api.post("/users/login", { username, password }).then(responseData);
@@ -138,3 +139,12 @@ export const getGameStatus = gameApi.getStatus;
 export const searchGames = gameApi.search;
 export const getGameDetails = gameApi.getDetails;
 export const getGameImages = gameApi.getImages;
+
+export const getBooks = bookApi.getAll;
+export const addBook = bookApi.add;
+export const updateBook = bookApi.update;
+export const deleteBook = bookApi.remove;
+export const getBookStatus = bookApi.getStatus;
+export const searchBooks = bookApi.search;
+export const getBookDetails = bookApi.getDetails;
+export const getBookImages = bookApi.getImages;

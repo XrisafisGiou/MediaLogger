@@ -53,6 +53,7 @@ export default function MediaCollectionPage({ config }) {
     update,
     remove,
     search,
+    getDetails,
   } = api;
   const labels = { ...defaultStatusUi, ...statusUi };
   const [entries, setEntries] = useState([]);
@@ -138,13 +139,18 @@ export default function MediaCollectionPage({ config }) {
   );
 
   async function addSearchResult(media, status) {
+    const detailedMedia = getDetails
+      ? await getDetails(media.id)
+      : media;
+
     await add({
-      [externalIdField]: media.id,
-      [titleField]: media[titleField],
-      posterPath: media.poster_path,
+      [externalIdField]: detailedMedia.id,
+      [titleField]: detailedMedia[titleField],
+      posterPath: detailedMedia.poster_path,
       status,
       isFavorite: false,
     });
+
     await loadEntries();
   }
 
