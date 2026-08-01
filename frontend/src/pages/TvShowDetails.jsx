@@ -5,6 +5,7 @@ import {
   Layers3,
   Star,
   Eye,
+  Tags,
 } from "lucide-react";
 import {
   addTvShow,
@@ -50,6 +51,11 @@ const tvShowDetailsConfig = {
       .filter(Boolean)
       .join(", ");
     const seasonCount = tvShow.number_of_seasons;
+    const genres =
+      tvShow.genres
+        ?.map((genre) => genre.name)
+        .filter(Boolean)
+        .join(", ") || "";
 
     return [
       {
@@ -69,6 +75,12 @@ const tvShowDetailsConfig = {
         label: "Episode runtime",
         value: episodeRuntime ? `${episodeRuntime} min episodes` : "N/A",
         icon: Clock3,
+      },
+      {
+        key: "genres",
+        label: "Genres",
+        value: genres,
+        icon: Tags,
       },
       {
         key: "seasons",

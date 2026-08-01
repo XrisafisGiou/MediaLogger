@@ -3,6 +3,7 @@ import {
   Building2,
   CalendarDays,
   UserRound,
+  Tags,
 } from "lucide-react";
 import MediaDetailsPage from "../components/media/MediaDetailsPage";
 import {
@@ -104,7 +105,7 @@ const bookDetailsConfig = {
       key: "categories",
       label: "Categories",
       value: formatCategories(book.categories),
-      icon: Book,
+      icon: Tags,
     },
   ],
 

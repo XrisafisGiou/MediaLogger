@@ -4,6 +4,7 @@ import {
   Gamepad2,
   Monitor,
   Star,
+  Tags,
 } from "lucide-react";
 import MediaDetailsPage from "../components/media/MediaDetailsPage";
 import {
@@ -100,7 +101,7 @@ const gameDetailsConfig = {
         key: "genres",
         label: "Genres",
         value: genres,
-        icon: Gamepad2,
+        icon: Tags,
       },
       {
         key: "developers",

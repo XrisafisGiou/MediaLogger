@@ -1,4 +1,4 @@
-import { CalendarDays, Clapperboard, Clock3, Star, Eye } from "lucide-react";
+import { CalendarDays, Clapperboard, Clock3, Star, Eye, Tags } from "lucide-react";
 import {
   addMovie,
   deleteMovie,
@@ -36,6 +36,11 @@ const movieDetailsConfig = {
     const director = credits?.crew?.find(
       (person) => person.job === "Director",
     )?.name;
+    const genres =
+    movie.genres
+      ?.map((genre) => genre.name)
+      .filter(Boolean)
+      .join(", ") || "";
 
     return [
       {
@@ -55,6 +60,12 @@ const movieDetailsConfig = {
         label: "Runtime",
         value: movie.runtime ? `${movie.runtime} min` : "N/A",
         icon: Clock3,
+      },
+      {
+        key: "genres",
+        label: "Genres",
+        value: genres,
+        icon: Tags,
       },
       {
         key: "director",
