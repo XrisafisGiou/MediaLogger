@@ -3,7 +3,7 @@ import {
   getBookDetails,
   getBookImages,
   searchBooks,
-} from "../controllers/googleBooksController.js";
+} from "../controllers/openLibraryController.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 
 const router = express.Router();

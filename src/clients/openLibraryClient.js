@@ -1,30 +1,23 @@
 import axios from "axios";
 
-function getApiKey() {
-  const apiKey = process.env.GOOGLE_BOOKS_API_KEY;
+const contactEmail =
+  process.env.OPEN_LIBRARY_CONTACT_EMAIL?.trim();
 
-  if (!apiKey) {
-    throw new Error(
-      "GOOGLE_BOOKS_API_KEY is not configured",
-    );
-  }
+const userAgent = contactEmail
+  ? `MediaLogger (${contactEmail})`
+  : "MediaLogger/1.0";
 
-  return apiKey;
-}
-
-const googleBooksClient = axios.create({
+const openLibraryClient = axios.create({
   baseURL:
-    process.env.GOOGLE_BOOKS_BASE_URL ||
-    "https://www.googleapis.com/books/v1",
+    process.env.OPEN_LIBRARY_BASE_URL ||
+    "https://openlibrary.org",
+
+  timeout: 10_000,
+
+  headers: {
+    Accept: "application/json",
+    "User-Agent": userAgent,
+  },
 });
 
-googleBooksClient.interceptors.request.use((config) => {
-  config.params = {
-    ...config.params,
-    key: getApiKey(),
-  };
-
-  return config;
-});
-
-export default googleBooksClient;
+export default openLibraryClient;

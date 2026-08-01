@@ -105,7 +105,7 @@ model UserGame {
 
 model Book {
   id            Int    @id @default(autoincrement())
-  googleBooksId String @unique
+  openLibraryId String @unique
 
   title      String
   posterPath String?

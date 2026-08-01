@@ -97,7 +97,7 @@ function createMediaApi(
 const movieApi = createMediaApi("movies", "tmdb", "movie");
 const tvShowApi = createMediaApi("tv-shows", "tmdb", "tv");
 const gameApi = createMediaApi("games", "igdb", "game");
-const bookApi = createMediaApi("books", "google-books", "book",);
+const bookApi = createMediaApi("books", "open-library", "book",);
 
 export const login = (username, password) =>
   api.post("/users/login", { username, password }).then(responseData);

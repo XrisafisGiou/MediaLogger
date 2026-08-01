@@ -1,4 +1,4 @@
-export function getGoogleBooksImageUrl(url) {
+export function getOpenLibraryImageUrl(url) {
   if (!url) {
     return undefined;
   }

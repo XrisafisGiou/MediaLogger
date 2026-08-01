@@ -14,7 +14,7 @@ import {
   getBookStatus,
   updateBook,
 } from "../services/api.js";
-import { getGoogleBooksImageUrl } from "../utils/googleBooksImages.js";
+import { getOpenLibraryImageUrl } from "../utils/openLibraryImages.js";
 
 function formatAuthors(authors) {
   if (!Array.isArray(authors) || !authors.length) {
@@ -42,7 +42,7 @@ function formatCategories(categories) {
 }
 
 const bookDetailsConfig = {
-  getImageUrl: getGoogleBooksImageUrl,
+  getImageUrl: getOpenLibraryImageUrl,
   watchedIcon: Book,
 
   labels: {
@@ -110,7 +110,7 @@ const bookDetailsConfig = {
   ],
 
   createEntry: (book, status) => ({
-    googleBooksId: book.id,
+    openLibraryId: book.id,
     title: book.title,
     posterPath: book.poster_path,
     status,

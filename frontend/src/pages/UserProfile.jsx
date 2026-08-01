@@ -8,6 +8,7 @@ import {
   getMovies,
   getTvShows,
   getGames,
+  getBooks,
 } from "../services/api.js";
 import BackButton from "../components/common/BackButton";
 import StatGrid from "../components/common/StatGrid";
@@ -26,18 +27,20 @@ export default function UserProfile() {
 
   useEffect(() => {
     async function loadProfile() {
-      const [userData, movies, tvShows, games] =
+      const [userData, movies, tvShows, games, books] =
         await Promise.all([
           getCurrentUser(),
           getMovies(),
           getTvShows(),
           getGames(),
+          getBooks(),
         ]);
 
       const media = [
         ...movies,
         ...tvShows,
         ...games,
+        ...books,
       ];
 
       setUser(userData);

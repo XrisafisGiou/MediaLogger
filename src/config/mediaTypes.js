@@ -80,12 +80,12 @@ book: {
   notFoundMessage: "Book not found",
   validation: {
     requiredFields: [
-      "googleBooksId",
+      "openLibraryId",
       "title",
       "status",
     ],
     requiredMessage:
-      "googleBooksId, title and status are required",
+      "openLibraryId, title and status are required",
     validateStatus: true,
   },
   prisma: {
@@ -93,7 +93,7 @@ book: {
     userMediaModel: "userBook",
     relationField: "book",
     foreignKeyField: "bookId",
-    externalIdField: "googleBooksId",
+    externalIdField: "openLibraryId",
     externalIdType: "string",
     displayNameField: "title",
     compositeKey: "userId_bookId",

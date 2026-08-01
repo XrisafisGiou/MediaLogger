@@ -7,7 +7,7 @@ import {
   searchBooks,
   updateBook,
 } from "../services/api.js";
-import { getGoogleBooksImageUrl } from "../utils/googleBooksImages.js";
+import { getOpenLibraryImageUrl } from "../utils/openLibraryImages.js";
 import { Book } from "lucide-react";
 
 const bookCollection = {
@@ -20,12 +20,12 @@ const bookCollection = {
   searchPlaceholder: "Search book...",
 
   relationField: "book",
-  externalIdField: "googleBooksId",
+  externalIdField: "openLibraryId",
   titleField: "title",
   detailsRoute: "book",
   watchedIcon: Book,
 
-  getImageUrl: getGoogleBooksImageUrl,
+  getImageUrl: getOpenLibraryImageUrl,
 
   statusUi: {
     watched: "Read",
