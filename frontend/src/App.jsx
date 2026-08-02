@@ -13,6 +13,7 @@ import Games from "./pages/Games.jsx";
 import GameDetails from "./pages/GameDetails.jsx";
 import Books from "./pages/Books.jsx";
 import BookDetails from "./pages/BookDetails.jsx";
+import Favorites from "./pages/Favorites.jsx";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
           <Route path="/book/:externalId" element={<BookDetails />} />
           
           <Route path="/profile" element={<UserProfile />} />
+          <Route path="/favorites" element={<Favorites  />} />
         </Route>
       </Routes>
     </BrowserRouter>
