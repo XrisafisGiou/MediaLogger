@@ -1,53 +1,61 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState,
+} from "react";
 import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../context/useAuth";
 import {
   changePassword,
+  getBooks,
   getCurrentUser,
+  getGames,
   getMovies,
   getTvShows,
-  getGames,
-  getBooks,
 } from "../services/api.js";
 import BackButton from "../components/common/BackButton";
-import StatGrid from "../components/common/StatGrid";
 import PageShell from "../components/layout/PageShell";
 import PasswordForm from "../components/profile/PasswordForm";
+import ProfileStatsSection from "../components/profile/ProfileStatsSection";
+
+const emptyCollections = {
+  movies: [],
+  tvShows: [],
+  games: [],
+  books: [],
+};
 
 export default function UserProfile() {
   const navigate = useNavigate();
   const { logout } = useAuth();
+
   const [user, setUser] = useState(null);
-  const [stats, setStats] = useState({
-    watched: 0,
-    watchlist: 0,
-    favorites: 0,
-  });
+  const [collections, setCollections] =
+    useState(emptyCollections);
 
   useEffect(() => {
     async function loadProfile() {
-      const [userData, movies, tvShows, games, books] =
-        await Promise.all([
-          getCurrentUser(),
-          getMovies(),
-          getTvShows(),
-          getGames(),
-          getBooks(),
-        ]);
-
-      const media = [
-        ...movies,
-        ...tvShows,
-        ...games,
-        ...books,
-      ];
+      const [
+        userData,
+        movies,
+        tvShows,
+        games,
+        books,
+      ] = await Promise.all([
+        getCurrentUser(),
+        getMovies(),
+        getTvShows(),
+        getGames(),
+        getBooks(),
+      ]);
 
       setUser(userData);
-      setStats({
-        watched: media.filter((item) => item.status === "watched").length,
-        watchlist: media.filter((item) => item.status === "watchlist").length,
-        favorites: media.filter((item) => item.isFavorite).length,
+
+      setCollections({
+        movies,
+        tvShows,
+        games,
+        books,
       });
     }
 
@@ -60,30 +68,58 @@ export default function UserProfile() {
   }
 
   return (
-    <PageShell contentClassName="mx-auto max-w-3xl p-6">
-      <BackButton onClick={() => navigate(-1)} className="mb-6" />
+    <PageShell contentClassName="mx-auto max-w-4xl p-6">
+      <BackButton
+        onClick={() => navigate(-1)}
+        className="mb-6"
+      />
 
       <section className="rounded-xl border border-white/20 bg-white/10 p-8">
-        <h1 className="mb-6 text-3xl font-bold">Profile</h1>
+        <h1 className="mb-6 text-3xl font-bold">{user?.username}</h1>
 
-        <p className="text-white/50">Username</p>
-        <p className="mb-8 text-xl">{user?.username}</p>
+        <div className="space-y-8">
+          <ProfileStatsSection
+            title="Movies"
+            entries={collections.movies}
+            completedLabel="Watched"
+            plannedLabel="Watchlist"
+          />
 
-        <StatGrid
-          items={[
-            { key: "watched", label: "Watched", value: stats.watched },
-            { key: "watchlist", label: "Watchlist", value: stats.watchlist },
-            { key: "favorites", label: "Favorites", value: stats.favorites },
-          ]}
+          <ProfileStatsSection
+            title="TV Shows"
+            entries={collections.tvShows}
+            completedLabel="Watched"
+            plannedLabel="Watchlist"
+          />
+
+          <ProfileStatsSection
+            title="Games"
+            entries={collections.games}
+            completedLabel="Played"
+            plannedLabel="Want to Play"
+          />
+
+          <ProfileStatsSection
+            title="Books"
+            entries={collections.books}
+            completedLabel="Read"
+            plannedLabel="Reading List"
+          />
+        </div>
+
+        <PasswordForm
+          onSubmit={changePassword}
         />
-        <PasswordForm onSubmit={changePassword} />
 
         <button
           type="button"
           onClick={handleLogout}
           className="mt-8 flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/20 px-4 py-2 transition hover:bg-red-500/40"
         >
-          <LogOut size={18} aria-hidden="true" />
+          <LogOut
+            size={18}
+            aria-hidden="true"
+          />
           Logout
         </button>
       </section>
