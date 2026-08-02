@@ -272,6 +272,14 @@ export default function MediaCollectionPage({ config }) {
           onClick={() => navigate("/profile")}
         />
         <IconButton
+          icon={Heart}
+          label="Favorites"
+          onClick={() =>
+            navigate("/favorites")
+          }
+          className="hover:border-red-400 hover:bg-red-500/20 hover:text-red-300"
+        />
+        <IconButton
           icon={LogOut}
           label="Logout"
           onClick={() => {
