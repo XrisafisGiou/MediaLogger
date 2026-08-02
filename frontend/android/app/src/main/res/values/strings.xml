@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">MediaLogger</string>
+    <string name="title_activity_main">MediaLogger</string>
+    <string name="package_name">com.xrisafisgiou.medialogger</string>
+    <string name="custom_url_scheme">com.xrisafisgiou.medialogger</string>
+</resources>
