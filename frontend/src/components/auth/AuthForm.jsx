@@ -13,7 +13,7 @@ export default function AuthForm({
   return (
     <form
       onSubmit={onSubmit}
-      className="flex flex-col space-y-4 rounded-xl bg-white p-8 shadow-lg"
+      className="flex w-full flex-col space-y-4 rounded-xl bg-white/95 p-5 shadow-xl backdrop-blur sm:p-8"
     >
       <h1 className="text-center text-xl font-bold">{title}</h1>
       {children}

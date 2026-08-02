@@ -264,7 +264,7 @@ export default function MediaCollectionPage({ config }) {
   ];
 
   return (
-    <PageShell contentClassName="p-6">
+    <PageShell contentClassName="p-4 sm:p-6">
       <PageHeader title={heading} className="mb-6">
         <IconButton
           icon={User}

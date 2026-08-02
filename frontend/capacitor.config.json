@@ -1,5 +1,6 @@
 {
   "appId": "com.xrisafisgiou.medialogger",
   "appName": "MediaLogger",
-  "webDir": "dist"
+  "webDir": "dist",
+  "backgroundColor": "#020617"
 }

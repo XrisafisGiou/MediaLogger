@@ -94,7 +94,7 @@ export default function MediaDetailsPage({ config }) {
   return (
     <PageShell
       backgroundImage={getImageUrl(media.backdrop_path, "original")}
-      contentClassName="mx-auto max-w-6xl p-6"
+      contentClassName="mx-auto max-w-6xl p-4 sm:p-6"
     >
       <BackButton onClick={() => navigate(-1)} className="mb-6" />
 

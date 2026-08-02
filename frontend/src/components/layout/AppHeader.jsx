@@ -35,10 +35,10 @@ export default function AppHeader() {
             src="/logo.svg"
             alt=""
             aria-hidden="true"
-            className="h-8 w-8 shrink-0"
+            className="h-8 w-8 shrink-0 hidden sm:inline"
           />
 
-          <span>MediaLogger</span>
+          <span className="hidden sm:inline">MediaLogger</span>
         </NavLink>
 
         <nav

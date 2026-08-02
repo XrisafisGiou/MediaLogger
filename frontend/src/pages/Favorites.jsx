@@ -156,7 +156,7 @@ export default function Favorites() {
   ];
 
   return (
-    <PageShell contentClassName="mx-auto max-w-7xl p-6">
+    <PageShell contentClassName="mx-auto max-w-7xl p-4 sm:p-6">
       <PageHeader
         title="My Favorites"
         className="mb-8"

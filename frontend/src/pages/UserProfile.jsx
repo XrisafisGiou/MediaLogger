@@ -68,7 +68,7 @@ export default function UserProfile() {
   }
 
   return (
-    <PageShell contentClassName="mx-auto max-w-4xl p-6">
+    <PageShell contentClassName="mx-auto max-w-4xl p-4 sm:p-6">
       <BackButton
         onClick={() => navigate(-1)}
         className="mb-6"
