@@ -88,7 +88,7 @@ export default function MediaDetailsPage({ config }) {
 
   const title = config.getTitle(media);
   const cast = config.getCast
-    ? config.getCast(credits).slice(0, 10)
+    ? config.getCast(credits)
     : [];
 
   return (
