@@ -3,4 +3,3 @@ node_modules
 /src/prisma/generated
 /frontend/.env
 .env.docker
-screenshots
