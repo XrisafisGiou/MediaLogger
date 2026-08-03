@@ -56,7 +56,7 @@ Use the Deployed Versions
 
 • Android APK: Download the latest APK from the repository's Releases page.
 
-Android may ask you to allow installation from unknown sources when installing the APK directly.
+  Android may ask you to allow installation from unknown sources when installing the APK directly.
 
 • Run Locally with Docker
 
