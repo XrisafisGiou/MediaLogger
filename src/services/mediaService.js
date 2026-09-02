@@ -24,7 +24,7 @@ export class MediaService {
       includeOnWrite,
     } = this.config.prisma;
     const displayName = mediaData[displayNameField];
-    const { posterPath, status, isFavorite } = mediaData;
+    const { posterPath, status, isFavorite, notes, } = mediaData;
 
     const {
       requiredFields,
@@ -76,12 +76,14 @@ export class MediaService {
       update: {
         status,
         isFavorite: isFavorite ?? false,
+        ...(notes !== undefined && { notes }),
       },
       create: {
         userId,
         [foreignKeyField]: media.id,
         status,
         isFavorite: isFavorite ?? false,
+        notes: notes ?? null,
       },
       ...(includeOnWrite && {
         include: {
@@ -120,7 +122,7 @@ export class MediaService {
       throw new NotFoundError(this.config.notFoundMessage);
     }
 
-    const { status, isFavorite } = updates;
+    const { status, isFavorite, notes, } = updates;
 
     if (
       status !== undefined &&
@@ -134,6 +136,7 @@ export class MediaService {
       data: {
         ...(status !== undefined && { status }),
         ...(isFavorite !== undefined && { isFavorite }),
+        ...(notes !== undefined && { notes }),
       },
       ...(includeOnWrite && {
         include: {
@@ -199,6 +202,7 @@ export class MediaService {
       id: userMedia.id,
       status: userMedia.status,
       isFavorite: userMedia.isFavorite,
+      notes: userMedia.notes,
     };
   }
 

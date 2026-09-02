@@ -6,6 +6,7 @@ import PageShell from "../layout/PageShell";
 import CastMemberCard from "./CastMemberCard";
 import MediaDetailsHero from "./MediaDetailsHero";
 import MediaScreenshotCard from "./MediaScreenshotCard";
+import { Save } from "lucide-react";
 
 export default function MediaDetailsPage({ config }) {
   const { externalId } = useParams();
@@ -17,6 +18,8 @@ export default function MediaDetailsPage({ config }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const { getImageUrl } = config;
+  const [notes, setNotes] = useState("");
+  const [savingNotes, setSavingNotes] = useState(false);
 
   useEffect(() => {
     let isCurrent = true;
@@ -39,6 +42,7 @@ export default function MediaDetailsPage({ config }) {
 
         setMedia(mediaData);
         setLibraryEntry(statusData);
+        setNotes(statusData?.notes || "");
         setScreenshots(images.backdrops?.slice(0, 5) || []);
         setCredits(creditsData);
       } catch {
@@ -69,6 +73,35 @@ export default function MediaDetailsPage({ config }) {
 
     setLibraryEntry(await config.api.getStatus(externalId));
   }
+
+  async function saveNotes() {
+  if (!libraryEntry) {
+    return;
+  }
+
+  try {
+    setSavingNotes(true);
+
+    const updatedEntry =
+      await config.api.update(
+        libraryEntry.id,
+        {
+          notes,
+        },
+      );
+
+    setLibraryEntry(
+      updatedEntry,
+    );
+  } catch (error) {
+    console.error(
+      "Failed to save notes:",
+      error,
+    );
+  } finally {
+    setSavingNotes(false);
+  }
+}
 
   if (loading) {
     return (
@@ -109,6 +142,69 @@ export default function MediaDetailsPage({ config }) {
         getImageUrl={getImageUrl}
         watchedIcon={config.watchedIcon}
       />
+
+      {libraryEntry?.status === "watched" && (
+        <div className="mt-6 max-w-2xl">
+          <h2 className="mb-2 text-lg font-semibold">
+            My Notes
+          </h2>
+
+          <div className="flex items-end gap-2">
+            <textarea
+              value={notes}
+              onChange={(event) =>
+                setNotes(event.target.value)
+              }
+              placeholder="Write your thoughts about this..."
+              rows={5}
+              className="
+                w-full
+                resize-y
+                rounded-xl
+                border border-white/10
+                bg-white/5
+                p-4
+                text-white
+                placeholder:text-white/30
+                outline-none
+                transition
+                focus:border-purple-500
+              "
+            />
+            <button
+              type="button"
+              onClick={saveNotes}
+              disabled={savingNotes}
+              aria-label="Save notes"
+              title="Save notes"
+              className="
+                flex
+                h-[42px]
+                w-[42px]
+                shrink-0
+                items-center
+                justify-center
+                rounded-xl
+                bg-purple-600
+                text-white
+                transition
+                hover:bg-purple-500
+                disabled:cursor-not-allowed
+                disabled:opacity-50
+              "
+            >
+              <Save
+                size={18}
+                className={
+                  savingNotes
+                    ? "animate-pulse"
+                    : ""
+                }
+              />
+            </button>
+          </div>
+        </div>
+      )}
 
       <Carousel
         title="Screenshots"

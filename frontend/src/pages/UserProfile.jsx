@@ -33,6 +33,8 @@ export default function UserProfile() {
   const [collections, setCollections] =
     useState(emptyCollections);
 
+  const isVip = user?.username === "pookie12";
+
   useEffect(() => {
     async function loadProfile() {
       const [
@@ -75,7 +77,36 @@ export default function UserProfile() {
       />
 
       <section className="rounded-xl border border-white/20 bg-white/10 p-8">
-        <h1 className="mb-6 text-3xl font-bold">{user?.username}</h1>
+      <div className="flex items-center gap-3">
+          <h1
+            className={`text-3xl font-bold ${
+              isVip
+                ? "text-pink-400"
+                : "text-white"
+            }`}
+          >
+            {user?.username}
+          </h1>
+
+          {isVip && (
+            <span
+              className="
+                rounded-full
+                border border-pink-300/50
+                bg-pink-500/20
+                px-4 py-1
+                text-sm
+                font-black
+                tracking-widest
+                text-pink-300
+                shadow-lg
+                shadow-pink-500/20
+              "
+            >
+              VIP
+            </span>
+          )}
+        </div>
 
         <div className="space-y-8">
           <ProfileStatsSection

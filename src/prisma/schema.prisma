@@ -36,6 +36,7 @@ model UserMovie {
 
   status     MediaStatus
   isFavorite Boolean     @default(false)
+  notes String?
 
   user  User  @relation(fields: [userId], references: [id])
   movie Movie @relation(fields: [movieId], references: [id])
@@ -71,6 +72,7 @@ model UserTvShow {
 
   status     MediaStatus
   isFavorite Boolean     @default(false)
+  notes String?
 
   user   User   @relation(fields: [userId], references: [id])
   tvShow TvShow @relation(fields: [tvShowId], references: [id])
@@ -96,6 +98,7 @@ model UserGame {
 
   status     MediaStatus
   isFavorite Boolean     @default(false)
+  notes String?
 
   user User @relation(fields: [userId], references: [id])
   game Game @relation(fields: [gameId], references: [id])
@@ -121,6 +124,7 @@ model UserBook {
 
   status     MediaStatus
   isFavorite Boolean     @default(false)
+  notes String?
 
   user User @relation(fields: [userId], references: [id])
   book Book @relation(fields: [bookId], references: [id])
