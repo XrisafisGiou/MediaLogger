@@ -17,6 +17,7 @@
     "prisma": "^6.19.3"
   },
   "dependencies": {
+    "@google/genai": "^2.20.0",
     "@prisma/client": "^6.19.3",
     "axios": "^1.18.1",
     "bcrypt": "^6.0.0",

@@ -113,6 +113,11 @@ export const getCurrentUser = () =>
 export const changePassword = (data) =>
   api.patch("/users/password", data).then(responseData);
 
+export const sendAiMessage = (messages) =>
+  api
+    .post("/ai/chat", { messages })
+    .then(responseData);
+
 export const getMovies = movieApi.getAll;
 export const addMovie = movieApi.add;
 export const updateMovie = movieApi.update;

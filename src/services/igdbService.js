@@ -35,7 +35,13 @@ function normalizeSearchResult(game) {
   return {
     id: game.id,
     name: game.name,
-    poster_path: game.cover?.image_id ?? null,
+    releaseYear: game.first_release_date
+      ? new Date(
+          game.first_release_date * 1000,
+        ).getUTCFullYear()
+      : null,
+    poster_path:
+      game.cover?.image_id ?? null,
   };
 }
 
@@ -93,6 +99,7 @@ export class IgdbService {
       fields
         id,
         name,
+        first_release_date,
         cover.image_id,
         game_type,
         game_type.type,
