@@ -12,7 +12,9 @@ MediaLogger is a full-stack media tracking application for organizing movies, TV
 
 • Watched/read/played and watchlist/reading-list statuses
 
-• Favorites and profile statistics
+• Favorites, notes and profile statistics
+
+• Walter AI assistant powered by Google Gemini for conversational media recommendations
 
 • Responsive web interface and Android app
 
@@ -40,6 +42,8 @@ MediaLogger is a full-stack media tracking application for organizing movies, TV
 
 • Database: PostgreSQL
 
+• AI: Google Gemini API
+
 • External data: TMDB, IGDB, Open Library
 
 • Android: Capacitor
@@ -48,7 +52,11 @@ MediaLogger is a full-stack media tracking application for organizing movies, TV
 
 # How It Works
 
-The React frontend sends requests to the Express API. The backend handles authentication and stores each user's library in PostgreSQL through Prisma. Media information is retrieved from TMDB for movies and TV shows, IGDB for games, and Open Library for books. The Android version packages the same frontend with Capacitor and connects to the deployed API.
+• The React frontend sends requests to the Express API. The backend handles authentication and stores each user's library in PostgreSQL through Prisma. Media information is retrieved from TMDB for movies and TV shows, IGDB for games, and Open Library for books. 
+
+• Walter AI assistant powered by Google Gemini, with personalized recommendations based on the user's MediaLogger library and integrated media cards
+
+• The Android version packages the same frontend with Capacitor and connects to the deployed API.
 
 Use the Deployed Versions
 
