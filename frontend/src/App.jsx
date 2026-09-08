@@ -1,6 +1,7 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import AppLayout from "./components/layout/AppLayout";
+import useAuth from "./context/useAuth";
 
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
@@ -16,10 +17,18 @@ import BookDetails from "./pages/BookDetails.jsx";
 import Favorites from "./pages/Favorites.jsx";
 
 function App() {
+  const { isAuthenticated } = useAuth();
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route
+          path="/"
+          element={
+            isAuthenticated
+              ? <Navigate to="/movies" replace />
+              : <Login />
+          }
+        />
         <Route path="/register" element={<Register />} />
 
         <Route

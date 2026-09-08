@@ -69,7 +69,7 @@ export class UserService {
     const token = this.tokenProvider.sign(
       { userId: user.id, username: user.username },
       this.jwtSecret,
-      { expiresIn: "1d" },
+      { expiresIn: "30d" },
     );
 
     return {
