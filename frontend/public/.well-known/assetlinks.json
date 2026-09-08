@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.xrisafisgiou.medialogger",
+      "sha256_cert_fingerprints": [
+        "AA:8C:CC:87:EF:17:F9:2D:05:69:EF:04:70:B7:F9:37:2C:1E:F8:4D:78:B2:81:5F:4B:55:F5:EE:4F:73:83:18"
+      ]
+    }
+  }
+]
