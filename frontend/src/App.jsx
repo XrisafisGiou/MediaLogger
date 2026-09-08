@@ -1,7 +1,9 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import AppLayout from "./components/layout/AppLayout";
 import useAuth from "./context/useAuth";
+import { useEffect } from "react";
+import { App as CapacitorApp } from "@capacitor/app";
 
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
@@ -16,10 +18,51 @@ import Books from "./pages/Books.jsx";
 import BookDetails from "./pages/BookDetails.jsx";
 import Favorites from "./pages/Favorites.jsx";
 
+function DeepLinkHandler() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    function handleUrl(url) {
+      try {
+        const parsedUrl = new URL(url);
+
+        if (parsedUrl.hostname !== "media-logger-iota.vercel.app") {
+          return;
+        }
+
+        navigate(parsedUrl.pathname);
+      } catch (error) {
+        console.error("Invalid deep link:", error);
+      }
+    }
+
+    let listener;
+
+    CapacitorApp.addListener("appUrlOpen", ({ url }) => {
+      handleUrl(url);
+    }).then((handle) => {
+      listener = handle;
+    });
+
+    CapacitorApp.getLaunchUrl().then((result) => {
+      if (result?.url) {
+        handleUrl(result.url);
+      }
+    });
+
+    return () => {
+      listener?.remove();
+    };
+  }, [navigate]);
+
+  return null;
+}
+
 function App() {
   const { isAuthenticated } = useAuth();
   return (
     <BrowserRouter>
+      <DeepLinkHandler />
       <Routes>
         <Route
           path="/"
